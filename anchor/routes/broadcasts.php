@@ -30,7 +30,7 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 
 		$per_page = Config::meta('posts_per_page');
 		
-		$broadcasts = $query->sort('date')
+		$broadcasts = $query->sort('created')
 			->take($per_page)
 			->skip(--$page * $per_page)
 			->get(array(Base::table('broadcasts.*'),

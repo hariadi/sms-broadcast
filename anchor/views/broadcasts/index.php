@@ -14,7 +14,7 @@
 		<?php echo Html::link('admin/broadcasts', '<span class="icon"></span> ' . __('global.all'), array(
 			'class' => ($status == 'all') ? 'active' : ''
 		)); ?>
-		<?php foreach(array('success', 'failed') as $type): ?>
+		<?php foreach(array('success', 'pending', 'failed') as $type): ?>
 		<?php echo Html::link('admin/broadcasts/status/' . $type, '<span class="icon"></span> ' . __('global.' . $type), array(
 			'class' => ($status == $type) ? 'active' : ''
 		)); ?>
@@ -26,8 +26,13 @@
 		<li>
 			<a href="<?php echo Uri::to('admin/broadcasts/edit/' . $broadcast->id); ?>">
 				<strong><?php echo $broadcast->client_name; ?></strong>
+				<span>
+					<time><?php echo Date::format($broadcast->created); ?></time>
 
-				<span><?php echo $broadcast->date; ?></span>
+					<em class="status <?php echo $broadcast->status; ?>" title="<?php echo __('global.' . $broadcast->status); ?>">
+						<?php echo __('global.' . $broadcast->status); ?>
+					</em>
+				</span>
 			</a>
 		</li>
 		<?php endforeach; ?>
