@@ -7,35 +7,39 @@
 <section class="wrap">
 	<?php echo $messages; ?>
 
-	<form method="post" action="<?php echo Uri::to('admin/broadcasts/add'); ?>" novalidate>
+	<form method="post" action="<?php echo Uri::to('admin/broadcasts/add'); ?>" novalidate enctype="multipart/form-data">
 
 		<input name="token" type="hidden" value="<?php echo $token; ?>">
 
 		<fieldset class="split">
 			<p>
-				<label for="title"><?php echo __('broadcasts.title'); ?>:</label>
-				<input id="title" name="title" value="<?php echo Input::previous('title'); ?>">
-				<em><?php echo __('broadcasts.title_explain'); ?></em>
+				<label for="sender"><?php echo __('broadcasts.sender'); ?>:</label>
+				<input id="sender" name="sender" value="<?php echo Input::previous('sender'); ?>">
+				<em><?php echo __('broadcasts.sender_explain'); ?></em>
 			</p>
 			<p>
-				<label for="slug"><?php echo __('broadcasts.slug'); ?>:</label>
-				<input id="slug" name="slug" value="<?php echo Input::previous('slug'); ?>">
-				<em><?php echo __('broadcasts.slug_explain', 'The slug for your broadcast.'); ?></em>
+				<label for="recipient"><?php echo __('broadcasts.recipient'); ?>:</label>
+				<input id="recipient" name="recipient" value="<?php echo Input::previous('recipient'); ?>">
+				<em><?php echo __('broadcasts.recipient_explain', 'The recipient for your broadcast.'); ?></em>
 			</p>
 			<p>
-				<label for="description"><?php echo __('broadcasts.description'); ?>:</label>
-				<textarea id="description" name="description"><?php echo Input::previous('description'); ?></textarea>
-				<em><?php echo __('broadcasts.description_explain'); ?></em>
+				<label for="fromfile"><?php echo __('broadcasts.fromfile'); ?>:</label>
+				<input type="file" id="fromfile" name="fromfile">
+				<em><?php echo __('broadcasts.fromfile_explain', 'Or upload recipient for your broadcast.'); ?></em>
+			</p>
+			<p>
+				<label for="message"><?php echo __('broadcasts.message'); ?>:</label>
+				<textarea id="message" name="message"><?php echo Input::previous('message'); ?></textarea>
+				<em><?php echo __('broadcasts.message_explain'); ?></em>
 			</p>
 		</fieldset>
 
 		<aside class="buttons">
-			<?php echo Form::button(__('global.save'), array('type' => 'submit', 'class' => 'btn')); ?>
+			<?php echo Form::button(__('global.broadcast'), array('type' => 'submit', 'class' => 'btn')); ?>
 		</aside>
 
 	</form>
 </section>
 
-<script src="<?php echo asset('anchor/views/assets/js/slug.js'); ?>"></script>
 
 <?php echo $footer; ?>

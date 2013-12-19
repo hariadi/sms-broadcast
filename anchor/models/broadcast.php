@@ -14,8 +14,8 @@ class Broadcast extends Base {
 		return $items;
 	}
 
-	public static function slug($slug) {
-		return static::where('slug', 'like', $slug)->fetch();
+	public static function recipient($recipient) {
+		return static::where('recipient', 'like', $recipient)->fetch();
 	}
 
 	public static function get($row, $val) {

@@ -65,12 +65,12 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 	});
 
 	Route::post('admin/broadcasts/edit/(:num)', function($id) {
-		$input = Input::get(array('title', 'slug', 'description'));
+		$input = Input::get(array('sender', 'recipient', 'message'));
 
 		$validator = new Validator($input);
 
-		$validator->check('title')
-			->is_max(3, __('broadcasts.title_missing'));
+		$validator->check('sender')
+			->is_max(3, __('broadcasts.sender_missing'));
 
 		if($errors = $validator->errors()) {
 			Input::flash();
@@ -80,11 +80,11 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 			return Response::redirect('admin/broadcasts/edit/' . $id);
 		}
 
-		if(empty($input['slug'])) {
-			$input['slug'] = $input['title'];
+		if(empty($input['recipient'])) {
+			$input['recipient'] = $input['sender'];
 		}
 
-		$input['slug'] = slug($input['slug']);
+		$input['recipient'] = recipient($input['recipient']);
 
 		Broadcast::update($id, $input);
 
@@ -106,12 +106,82 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 	});
 
 	Route::post('admin/broadcasts/add', function() {
-		$input = Input::get(array('title', 'slug', 'description'));
+
+		$input = Input::get(array('sender', 'recipient', 'fromfile', 'message'));
+		$recipients = array();
+		$input['fromfile'] = $_FILES['fromfile'];
+
+		if(empty($input['sender'])) {
+			$input['sender'] = '63663';
+		}
+
+		if(!empty($input['recipient'])) {
+
+			$recipient = $input['recipient'];
+			unset($input['recipient']);
+			$input['recipient'] = array();
+
+			if (strpos($recipient, ',') !== false) {
+
+			  $input['recipient'] = explode(',', $recipient);
+
+			} else {
+
+				$input['recipient'][] = $recipient;
+
+			}
+
+			
+		}
 
 		$validator = new Validator($input);
 
-		$validator->check('title')
-			->is_max(3, __('broadcasts.title_missing'));
+		if(count($input['fromfile']) > 0) {
+
+			$upload = Upload::factory(PATH . 'content');
+			$upload->file($input['fromfile']);
+			//$upload->set_filename();
+			$upload->set_max_file_size((int)(ini_get('upload_max_filesize')));
+			$upload->set_allowed_mime_types(array('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/excel', 'application/vnd.ms-excel'));
+			$results = $upload->upload();
+
+			if(count($results['errors']) > 0) {
+				Notify::add('error', implode(', ', $results['errors']));
+				return Response::redirect('admin/broadcasts/add');
+			}
+
+			$input['file'] = $results['filename'];
+
+			//no error
+			require PATH . 'vendor/nuovo/spreadsheet-reader/php-excel-reader/excel_reader2' . EXT;
+			require PATH . 'vendor/nuovo/spreadsheet-reader/SpreadsheetReader' . EXT;
+
+			$Reader = new SpreadsheetReader($results['full_path']);
+			$data = array();
+			foreach ($Reader as $Row)
+	    {
+	      $data[] = $Row[0];
+	    }
+
+	    $recipients = array_merge($input['recipient'], normalize_number($data));
+	    $input['recipient'] = Json::encode($recipients);
+
+	    
+		}
+
+		$fromfile = $input['fromfile'];
+		unset($input['fromfile']);
+
+		if(!count($fromfile) > 0 ) {
+
+			$validator->check('recipient')
+			->is_max(3, __('broadcasts.recipient_missing'));
+
+		}
+
+		$validator->check('message')
+			->is_max(3, __('broadcasts.message_missing'));
+		
 
 		if($errors = $validator->errors()) {
 			Input::flash();
@@ -121,11 +191,9 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 			return Response::redirect('admin/broadcasts/add');
 		}
 
-		if(empty($input['slug'])) {
-			$input['slug'] = $input['title'];
-		}
-
-		$input['slug'] = slug($input['slug']);
+		$user = Auth::user();
+		$input['client'] = $user->id;
+		$input['status'] = 'success';
 
 		Broadcast::create($input);
 

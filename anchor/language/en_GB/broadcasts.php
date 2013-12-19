@@ -9,15 +9,20 @@ return array(
 	'edit_broadcast' => 'Editing &ldquo;%s&rdquo;',
 
 	// form fields
-	'title' => 'Title',
-	'title_explain' => 'Your broadcast title.',
-	'title_missing' => 'Please enter a title',
+	'sender' => 'Sender',
+	'sender_explain' => 'Your broadcast sender.',
+	'sender_missing' => 'Please enter a sender',
+	'recipient_missing' => 'Please enter a recipient',
+	'message_missing' => 'Please enter a message',
 
-	'slug' => 'Slug',
-	'slug_explain' => 'The slug for your broadcast.',
+	'recipient' => 'Recipient',
+	'recipient_explain' => 'The recipient for your broadcast.',
 
-	'description' => 'Description',
-	'description_explain' => 'What your broadcast is about.',
+	'fromfile' => 'Filename',
+	'fromfile_explain' => 'Or upload recipient for your broadcast. (.txt, .doc, .pdf, and .xls only)',
+
+	'message' => 'Message',
+	'message_explain' => 'What your broadcast is about.',
 
 	// messages
 	'created' => 'Your new broadcast has been added.',

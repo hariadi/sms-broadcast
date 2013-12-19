@@ -53,3 +53,21 @@ function readable_size($size) {
 
 	return round($size / pow(1024, ($i = floor(log($size, 1024)))), 2) . ' ' . $unit[$i];
 }
+
+function normalize_number($numbers) {
+	if (is_array($numbers)) {
+
+		$searchReplaceArray = array(
+		  ' ' => '', 
+		  '+' => ''
+		);
+
+		$result = str_replace(
+		  array_keys($searchReplaceArray), 
+		  array_values($searchReplaceArray), 
+		  $numbers
+		);
+		
+	}
+	return $result;
+}

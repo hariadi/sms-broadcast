@@ -11,6 +11,7 @@ return array(
 	// words
 	'save' => 'Save',
 	'delete' => 'Delete',
+	'broadcast' => 'Broadcast',
 	'update' => 'Update',
 	'edit' => 'Edit',
 	'editing' => 'Editing',
@@ -36,7 +37,8 @@ return array(
 	'pending' => 'Pending',
 	'approved' => 'Approved',
 	'spam' => 'Spam',
-
+	'success' => 'Success',
+	'failed' => 'Failed',
 	'inactive' => 'Inactive',
 	'active' => 'Active',
 
