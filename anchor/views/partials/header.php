@@ -29,7 +29,13 @@
 							<a href="<?php echo Uri::to('admin/posts'); ?>">Anchor CMS</a>
 						</li>
 
-						<?php $menu = array('posts', 'comments', 'pages', /*'menu',*/ 'categories', 'users', 'extend'); ?>
+						<?php 
+
+						$menu = (Auth::user()->role == 'admin') ? 
+							array('posts', 'comments', 'pages', /*'menu',*/ 'categories', 'users', 'extend') :
+							array('broadcasts', 'profiles');
+
+						?>
 						<?php foreach($menu as $url): ?>
 						<li <?php if(strpos(Uri::current(), $url) !== false) echo 'class="active"'; ?>>
 							<a href="<?php echo Uri::to('admin/' . $url); ?>">

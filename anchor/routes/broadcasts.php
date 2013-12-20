@@ -54,43 +54,14 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 	/*
 		Edit Broadcast
 	*/
-	Route::get('admin/broadcasts/edit/(:num)', function($id) {
+	Route::get('admin/broadcasts/view/(:num)', function($id) {
 		$vars['messages'] = Notify::read();
 		$vars['token'] = Csrf::token();
 		$vars['broadcast'] = Broadcast::get('id', $id);
 
-		return View::create('broadcasts/edit', $vars)
+		return View::create('broadcasts/view', $vars)
 			->partial('header', 'partials/header')
 			->partial('footer', 'partials/footer');
-	});
-
-	Route::post('admin/broadcasts/edit/(:num)', function($id) {
-		$input = Input::get(array('sender', 'recipient', 'message'));
-
-		$validator = new Validator($input);
-
-		$validator->check('sender')
-			->is_max(3, __('broadcasts.sender_missing'));
-
-		if($errors = $validator->errors()) {
-			Input::flash();
-
-			Notify::error($errors);
-
-			return Response::redirect('admin/broadcasts/edit/' . $id);
-		}
-
-		if(empty($input['recipient'])) {
-			$input['recipient'] = $input['sender'];
-		}
-
-		$input['recipient'] = recipient($input['recipient']);
-
-		Broadcast::update($id, $input);
-
-		Notify::success(__('broadcasts.updated'));
-
-		return Response::redirect('admin/broadcasts/edit/' . $id);
 	});
 
 	/*
@@ -136,7 +107,7 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 
 		$validator = new Validator($input);
 
-		if(count($input['fromfile']) > 0) {
+		if($input['fromfile']['error'] === 0) {
 
 			$upload = Upload::factory(PATH . 'content');
 			$upload->file($input['fromfile']);
@@ -162,12 +133,12 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 	    {
 	      $data[] = $Row[0];
 	    }
-
-	    $recipients = array_merge($input['recipient'], normalize_number($data));
-	    $input['recipient'] = Json::encode($recipients);
-
-	    
+	    $input['recipient'][] = normalize_number($data);	    
 		}
+
+		//recipients = array_merge($input['recipient'], normalize_number($data));
+		$recipients = $input['recipient'];
+	  $input['recipient'] = Json::encode($recipients);
 
 		$fromfile = $input['fromfile'];
 		unset($input['fromfile']);
@@ -211,7 +182,7 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 		if($total == 1) {
 			Notify::error(__('broadcasts.delete_error'));
 
-			return Response::redirect('admin/broadcasts/edit/' . $id);
+			return Response::redirect('admin/broadcasts/view/' . $id);
 		}
 
 		// move posts

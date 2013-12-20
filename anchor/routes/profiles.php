@@ -1,13 +1,16 @@
 <?php
 
-Route::collection(array('before' => 'auth,admin,csrf'), function() {
+Route::collection(array('before' => 'auth,csrf'), function() {
 
 	/*
 		List users
 	*/
-	Route::get(array('admin/users', 'admin/users/(:num)'), function($page = 1) {
+	Route::get(array('admin/profiles', 'admin/profiles/(:num)'), function($page = 1) {
 		$vars['messages'] = Notify::read();
 		$vars['users'] = User::paginate($page, Config::get('meta.posts_per_page'));
+
+
+		$vars['user'] = User::find(Auth::user()->id);
 
 		return View::create('users/index', $vars)
 			->partial('header', 'partials/header')
@@ -17,7 +20,7 @@ Route::collection(array('before' => 'auth,admin,csrf'), function() {
 	/*
 		Edit user
 	*/
-	Route::get('admin/users/edit/(:num)', function($id) {
+	Route::get('admin/profiles/edit/(:num)', function($id) {
 		$vars['messages'] = Notify::read();
 		$vars['token'] = Csrf::token();
 		$vars['user'] = User::find($id);
@@ -38,7 +41,7 @@ Route::collection(array('before' => 'auth,admin,csrf'), function() {
 			->partial('footer', 'partials/footer');
 	});
 
-	Route::post('admin/users/edit/(:num)', function($id) {
+	Route::post('admin/profiles/edit/(:num)', function($id) {
 		$input = Input::get(array('username', 'email', 'real_name', 'bio', 'status', 'role'));
 		$password_reset = false;
 
@@ -69,7 +72,7 @@ Route::collection(array('before' => 'auth,admin,csrf'), function() {
 
 			Notify::error($errors);
 
-			return Response::redirect('admin/users/edit/' . $id);
+			return Response::redirect('admin/profiles/edit/' . $id);
 		}
 
 		if($password_reset) {
@@ -80,13 +83,13 @@ Route::collection(array('before' => 'auth,admin,csrf'), function() {
 
 		Notify::success(__('users.updated'));
 
-		return Response::redirect('admin/users/edit/' . $id);
+		return Response::redirect('admin/profiles/edit/' . $id);
 	});
 
 	/*
 		Add user
 	*/
-	Route::get('admin/users/add', function() {
+	Route::get('admin/profiles/add', function() {
 		$vars['messages'] = Notify::read();
 		$vars['token'] = Csrf::token();
 
@@ -106,7 +109,7 @@ Route::collection(array('before' => 'auth,admin,csrf'), function() {
 			->partial('footer', 'partials/footer');
 	});
 
-	Route::post('admin/users/add', function() {
+	Route::post('admin/profiles/add', function() {
 		$input = Input::get(array('username', 'email', 'real_name', 'password', 'bio', 'status', 'role'));
 
 		$validator = new Validator($input);
@@ -125,7 +128,7 @@ Route::collection(array('before' => 'auth,admin,csrf'), function() {
 
 			Notify::error($errors);
 
-			return Response::redirect('admin/users/add');
+			return Response::redirect('admin/profiles/add');
 		}
 
 		$input['password'] = Hash::make($input['password']);
@@ -134,26 +137,26 @@ Route::collection(array('before' => 'auth,admin,csrf'), function() {
 
 		Notify::success(__('users.created'));
 
-		return Response::redirect('admin/users');
+		return Response::redirect('admin/profiles');
 	});
 
 	/*
 		Delete user
 	*/
-	Route::get('admin/users/delete/(:num)', function($id) {
+	Route::get('admin/profiles/delete/(:num)', function($id) {
 		$self = Auth::user();
 
 		if($self->id == $id) {
 			Notify::error(__('users.delete_error'));
 
-			return Response::redirect('admin/users/edit/' . $id);
+			return Response::redirect('admin/profiles/edit/' . $id);
 		}
 
 		User::where('id', '=', $id)->delete();
 
 		Notify::success(__('users.deleted'));
 
-		return Response::redirect('admin/users');
+		return Response::redirect('admin/profiles');
 	});
 
 });
