@@ -10,6 +10,7 @@ return array(
 
 	// words
 	'save' => 'Save',
+	'back' => 'Back',
 	'delete' => 'Delete',
 	'broadcast' => 'Broadcast',
 	'update' => 'Update',

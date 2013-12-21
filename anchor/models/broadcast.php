@@ -30,8 +30,10 @@ class Broadcast extends Base {
 	public static function paginate($page = 1, $per_page = 10) {
 
 		$query = static::left_join(Base::table('users'), Base::table('users.id'), '=', Base::table('broadcasts.client'));
-
-		//$query = Query::table(static::table());
+		
+		if (Auth::user()->role != 'admin') {
+			$query = $query->where(Base::table('broadcasts.client'), '=', Auth::user()->id);
+		}
 
 		$count = $query->count();
 

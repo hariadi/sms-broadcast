@@ -805,3 +805,33 @@ input[type='range'], ::-webkit-slider-thumb {
 			color: #fff;
 			background-image: url('../img/tick.png');
 		}
+
+dl {
+  overflow: hidden;
+	width: 700px;
+}
+
+dt {
+	float: left;
+	clear: right;
+	width: 190px;
+	background: none repeat scroll 0% 0% rgb(230, 233, 237);
+	border-radius: 5px 0px 0px 5px;
+}
+
+dd {
+	float: right;
+	width: 510px;
+	margin-left: 0;
+	margin-bottom: 5px;
+	color: #444;
+	border-left: none;
+	background-color: white;
+}
+
+dt, dd {
+	height: 56px;
+	line-height: 56px;
+	padding-left: 14px;
+	font-size: 20px;
+}

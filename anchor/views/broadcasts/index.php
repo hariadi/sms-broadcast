@@ -25,7 +25,7 @@
 		<?php foreach($broadcasts->results as $broadcast): ?>
 		<li>
 			<a href="<?php echo Uri::to('admin/broadcasts/view/' . $broadcast->id); ?>">
-				<strong><?php echo $broadcast->client_name; ?></strong>
+				<strong><?php echo $broadcast->client_name; ?>: <?php echo $broadcast->id; ?></strong>
 				<span>
 					<time><?php echo Date::format($broadcast->created); ?></time>
 

@@ -173,32 +173,5 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 		return Response::redirect('admin/broadcasts');
 	});
 
-	/*
-		Delete Broadcast
-	*/
-	Route::get('admin/broadcasts/delete/(:num)', function($id) {
-		$total = Broadcast::count();
-
-		if($total == 1) {
-			Notify::error(__('broadcasts.delete_error'));
-
-			return Response::redirect('admin/broadcasts/view/' . $id);
-		}
-
-		// move posts
-		$broadcast = Broadcast::where('id', '<>', $id)->fetch();
-
-		// delete selected
-		Broadcast::find($id)->delete();
-
-		// update posts
-		Post::where('broadcast', '=', $id)->update(array(
-			'broadcast' => $broadcast->id
-		));
-
-		Notify::success(__('broadcasts.deleted'));
-
-		return Response::redirect('admin/broadcasts');
-	});
 
 });
