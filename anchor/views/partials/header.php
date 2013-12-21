@@ -30,11 +30,11 @@
 						</li>
 
 						<?php 
-
-						$menu = (Auth::user()->role == 'administrator') ? 
+						$menu = array('dashboard', 'broadcasts');
+						$personalize = (Auth::user()->role == 'administrator') ? 
 							array('posts', 'comments', 'pages', /*'menu',*/ 'categories', 'users', 'extend') :
-							array('broadcasts', 'profiles');
-
+							array('profiles');
+						$menu = array_merge($menu, $personalize);
 						?>
 						<?php foreach($menu as $url): ?>
 						<li <?php if(strpos(Uri::current(), $url) !== false) echo 'class="active"'; ?>>
