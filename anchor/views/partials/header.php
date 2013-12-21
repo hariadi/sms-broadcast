@@ -31,7 +31,7 @@
 
 						<?php 
 
-						$menu = (Auth::user()->role == 'admin') ? 
+						$menu = (Auth::user()->role == 'administrator') ? 
 							array('posts', 'comments', 'pages', /*'menu',*/ 'categories', 'users', 'extend') :
 							array('broadcasts', 'profiles');
 

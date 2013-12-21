@@ -12,7 +12,7 @@ Route::action('guest', function() {
 });
 
 Route::action('admin', function() {
-	if(Auth::user() and Auth::user()->role != 'admin') return Response::error(401);
+	if(Auth::user() and Auth::user()->role != 'administrator') return Response::error(401);
 });
 
 Route::action('csrf', function() {
