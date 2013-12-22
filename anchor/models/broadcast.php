@@ -31,7 +31,7 @@ class Broadcast extends Base {
 
 		$query = static::left_join(Base::table('users'), Base::table('users.id'), '=', Base::table('broadcasts.client'));
 		
-		if (Auth::user()->role != 'admin') {
+		if (Auth::user()->role != 'administrator') {
 			$query = $query->where(Base::table('broadcasts.client'), '=', Auth::user()->id);
 		}
 

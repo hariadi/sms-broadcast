@@ -10,8 +10,6 @@
 <section class="wrap">
 	<?php echo $messages; ?>
 
-	<?php echo Auth::user()->role; ?>
-
 	<nav class="sidebar statuses">
 		<?php echo Html::link('admin/broadcasts', '<span class="icon"></span> ' . __('global.all'), array(
 			'class' => ($status == 'all') ? 'active' : ''
