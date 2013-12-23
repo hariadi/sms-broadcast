@@ -50,6 +50,7 @@ return array(
 
 	// messages
 	'updated' => 'User profile updated.',
+	'since' 	=> 'Since',
 	'created' => 'User profile created.',
 	'deleted' => 'User profile deleted.',
 	'delete_error' => 'You cannot delete your own profile',

@@ -3,35 +3,37 @@
 	<head>
 		<meta charset="utf-8">
 		<title><?php echo __('global.manage'); ?> <?php echo Config::meta('sitename'); ?></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
 
-		<script src="<?php echo asset('anchor/views/assets/js/zepto.js'); ?>"></script>
+		<!-- CSS -->
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="<?php echo asset('anchor/views/assets/css/bootstrap.css')?>">
 
-		<link rel="stylesheet" href="<?php echo asset('anchor/views/assets/css/reset.css'); ?>">
-		<link rel="stylesheet" href="<?php echo asset('anchor/views/assets/css/admin.css'); ?>">
-		<link rel="stylesheet" href="<?php echo asset('anchor/views/assets/css/login.css'); ?>">
-		<link rel="stylesheet" href="<?php echo asset('anchor/views/assets/css/notifications.css'); ?>">
-		<link rel="stylesheet" href="<?php echo asset('anchor/views/assets/css/forms.css'); ?>">
-
-		<link rel="stylesheet" media="(max-width: 980px), (max-device-width: 480px)"
-			href="<?php echo asset('anchor/views/assets/css/small.css'); ?>">
-
-		<meta http-equiv="X-UA-Compatible" content="chrome=1">
-		<meta name="viewport" content="width=600">
+    <!-- Custom styles for this template -->
+    <link rel="stylesheet" href="<?php echo asset('anchor/views/assets/css/bootstrap-theme.css'); ?>">
 	</head>
 	<body class="<?php echo Auth::guest() ? 'login' : 'admin'; ?>">
 
-		<header class="top">
-			<div class="wrap">
-				<?php if(Auth::user()): ?>
-				<nav>
-					<ul>
-						<li class="logo">
-							<a href="<?php echo Uri::to('admin/posts'); ?>">Anchor CMS</a>
-						</li>
+		<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+			<div class="container">
 
-						<?php 
+				<div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="<?php echo Uri::to('/'); ?>"><?php echo Config::meta('sitename'); ?></a>
+        </div>
+
+        <nav class="collapse navbar-collapse" role="navigation">
+        	<?php if(Auth::user()): ?>
+	        <ul class="nav navbar-nav">
+	        	
+	        	<?php 
 						$menu = array('dashboard', 'broadcasts');
-						$personalize = (Auth::user()->role == 'administrator') ? 
+						$personalize = ($user = Auth::user() and $user->role == 'administrator') ? 
 							array('posts', 'comments', 'pages', /*'menu',*/ 'categories', 'users', 'extend') :
 							array('profiles');
 						$menu = array_merge($menu, $personalize);
@@ -43,19 +45,24 @@
 							</a>
 						</li>
 						<?php endforeach; ?>
-					</ul>
-				</nav>
+	        </ul>
+	        <?php endif; ?>
 
-				<?php echo Html::link('admin/logout', __('global.logout'), array('class' => 'btn')); ?>
+	        <ul class="nav navbar-nav navbar-right">
+	        	<?php if(Auth::user()): ?>
+	        	<li><?php echo Html::link('admin/logout', __('global.logout')); ?></li>
+	        	<?php else: ?>
+            <li>
+							<a href="<?php echo Uri::to('admin/users/login'); ?>"><?php echo __('global.login'); ?></a>
+						</li><?php endif; ?>
+          </ul>
+					
+        </nav>
 
-				<?php $home = Registry::get('home_page'); ?>
+			</div> <!-- //.container -->
+		</div> <!-- //.navbar -->
 
-				<?php echo Html::link($home->slug, __('global.visit_your_site'), array('class' => 'btn', 'target' => '_blank')); ?>
-
-				<?php else: ?>
-				<aside class="logo">
-					<a href="<?php echo Uri::to('admin/users/login'); ?>">Anchor CMS</a>
-				</aside>
-				<?php endif; ?>
-			</div>
-		</header>
+		<div class="container">
+      <div class="row">
+        <div class="col-lg-12">
+            <div class="well">

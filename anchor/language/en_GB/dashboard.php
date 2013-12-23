@@ -2,6 +2,6 @@
 
 return array(
 
-	'dashboard' => 'dashboard',
+	'dashboard' => 'Dashboard',
 
 );
