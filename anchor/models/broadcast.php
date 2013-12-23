@@ -38,7 +38,7 @@ class Broadcast extends Base {
 		$count = $query->count();
 
 		$broadcasts = $query->take($per_page)
-			->skip(--$page * $per_page)
+			->skip(($page - 1) * $per_page)
 			->get(array(Base::table('broadcasts.*'),
 				Base::table('users.id as client_id'),
 				Base::table('users.bio as client_bio'),
@@ -46,7 +46,7 @@ class Broadcast extends Base {
 
 		//$results = $query->take($per_page)->skip(($page - 1) * $per_page)->sort('date')->get();
 
-		return new Paginator($broadcasts, $count, $page, $per_page, Uri::to('broadcasts'));
+		return new Paginator($broadcasts, $count, $page, $per_page, Uri::to('admin/broadcasts'));
 	}
 
 }

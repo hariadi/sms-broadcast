@@ -15,6 +15,10 @@ return array(
 	'recipient_missing' => 'Please enter a recipient',
 	'message_missing' => 'Please enter a message',
 
+	'success' => 'Success',
+	'pending' => 'Pending',
+	'failed' => 'Failed',
+
 	'recipient' => 'Recipient',
 	'recipient_explain' => 'The recipient for your broadcast.',
 

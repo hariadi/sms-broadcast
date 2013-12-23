@@ -11,6 +11,8 @@
 
     <!-- Custom styles for this template -->
     <link rel="stylesheet" href="<?php echo asset('anchor/views/assets/css/bootstrap-theme.css'); ?>">
+
+    <link rel="stylesheet" href="<?php echo asset('anchor/views/assets/css/custom.css'); ?>">
 	</head>
 	<body class="<?php echo Auth::guest() ? 'login' : 'admin'; ?>">
 

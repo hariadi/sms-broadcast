@@ -56,7 +56,9 @@ return array(
 	// pharses
 	'visit_your_site' => 'Visit your site',
 	'powered_by_anchor' => 'Powered by Anchor, version %s',
+	'copyright' => 'TranSec %s',
 	'make_blogging_beautiful' => 'Make blogging beautiful.',
+	'make_broadcast_easier' => 'Make SMS broadcast easier.',
 
 	// intro
 	'welcome_to_anchor' => 'Welcome to Anchor',
@@ -71,7 +73,7 @@ return array(
 	'upgrade_later' => 'Upgrade later',
 
 	// debug profiler
-	'profile' => 'Profile',
+	'profile' => 'Debug Profile',
 	'profile_memory_usage' => 'Total memory usage',
 
 	// messages
