@@ -133,7 +133,7 @@ Route::post($posts_page->slug . '/(:any)', function($slug) use($posts_page) {
 	if($errors = $validator->errors()) {
 		Input::flash();
 
-		Notify::error($errors);
+		Notify::danger($errors);
 
 		return Response::redirect($posts_page->slug . '/' . $slug . '#comment');
 	}

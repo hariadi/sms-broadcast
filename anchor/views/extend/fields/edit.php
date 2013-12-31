@@ -15,7 +15,7 @@
 			<p>
 				<label for="type"><?php echo __('extend.type'); ?>:</label>
 				<select id="type" name="type">
-					<?php foreach(array('post', 'page') as $type): ?>
+					<?php foreach(array('post', 'page', 'user') as $type): ?>
 					<?php $selected = (Input::previous('type', $field->type) == $type) ? ' selected' : ''; ?>
 					<option<?php echo $selected; ?>><?php echo $type; ?></option>
 					<?php endforeach; ?>
@@ -85,6 +85,6 @@
 	</form>
 </section>
 
-<script src="<?php echo asset('anchor/views/assets/js/custom-fields.js'); ?>"></script>
+<!--script src="<?php echo asset('anchor/views/assets/js/custom-fields.js'); ?>"></script-->
 
 <?php echo $footer; ?>

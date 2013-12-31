@@ -18,7 +18,7 @@ Route::action('admin', function() {
 Route::action('csrf', function() {
 	if(Request::method() == 'POST') {
 		if( ! Csrf::check(Input::get('token'))) {
-			Notify::error(array('Invalid token'));
+			Notify::danger(array('Invalid token'));
 
 			return Response::redirect('admin/login');
 		}
@@ -49,16 +49,23 @@ Route::post('admin/login', array('before' => 'csrf', 'main' => function() {
 	$attempt = Auth::attempt(Input::get('user'), Input::get('pass'));
 
 	if( ! $attempt) {
-		Notify::error(__('users.login_error'));
+		Notify::danger(__('users.login_error'));
 
 		return Response::redirect('admin/login');
 	}
 
 	// check for updates
-	Update::version();
+	Balance::update();
 
-	if(version_compare(Config::get('meta.update_version'), VERSION, '>')) {
-		return Response::redirect('admin/upgrade');
+	// If admin login, notify about current balance
+	if (Auth::user()->role == 'administrator') {
+		$balance = Config::meta('update_balance');
+
+		if(version_compare($balance, 10.0, '<')) {
+			Notify::warning(__('users.current_credit', $balance));
+		} else {
+			Notify::info(__('users.current_credit', $balance));
+		}
 	}
 
 	return Response::redirect('admin/dashboard');
@@ -69,7 +76,7 @@ Route::post('admin/login', array('before' => 'csrf', 'main' => function() {
 */
 Route::get('admin/logout', function() {
 	Auth::logout();
-	Notify::notice(__('users.logout_notice'));
+	Notify::info(__('users.logout_notice'));
 	return Response::redirect('admin/login');
 });
 
@@ -102,7 +109,7 @@ Route::post('admin/amnesia', array('before' => 'csrf', 'main' => function() {
 	if($errors = $validator->errors()) {
 		Input::flash();
 
-		Notify::error($errors);
+		Notify::danger($errors);
 
 		return Response::redirect('admin/amnesia');
 	}
@@ -133,7 +140,7 @@ Route::get('admin/reset/(:any)', array('before' => 'guest', 'main' => function($
 	$vars['key'] = ($token = Session::get('token'));
 
 	if($token != $key) {
-		Notify::error(__('users.recovery_expired'));
+		Notify::danger(__('users.recovery_expired'));
 
 		return Response::redirect('admin/login');
 	}
@@ -149,7 +156,7 @@ Route::post('admin/reset/(:any)', array('before' => 'csrf', 'main' => function($
 	$user = Session::get('user');
 
 	if($token != $key) {
-		Notify::error(__('users.recovery_expired'));
+		Notify::danger(__('users.recovery_expired'));
 
 		return Response::redirect('admin/login');
 	}
@@ -162,7 +169,7 @@ Route::post('admin/reset/(:any)', array('before' => 'csrf', 'main' => function($
 	if($errors = $validator->errors()) {
 		Input::flash();
 
-		Notify::error($errors);
+		Notify::danger($errors);
 
 		return Response::redirect('admin/reset/' . $key);
 	}
@@ -181,6 +188,21 @@ Route::post('admin/reset/(:any)', array('before' => 'csrf', 'main' => function($
 	Upgrade
 */
 Route::get('admin/upgrade', function() {
+	$vars['messages'] = Notify::read();
+	$vars['token'] = Csrf::token();
+
+	$version = Config::meta('update_version');
+	$url = 'https://github.com/anchorcms/anchor-cms/archive/%s.zip';
+
+	$vars['version'] = $version;
+	$vars['url'] = sprintf($url, $version);
+
+	return View::create('upgrade', $vars)
+		->partial('header', 'partials/header')
+		->partial('footer', 'partials/footer');
+});
+
+Route::get('admin/balance', function() {
 	$vars['messages'] = Notify::read();
 	$vars['token'] = Csrf::token();
 

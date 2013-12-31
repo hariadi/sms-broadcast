@@ -38,7 +38,7 @@ Route::collection(array('before' => 'auth,admin,csrf'), function() {
 		if($errors = $validator->errors()) {
 			Input::flash();
 
-			Notify::error($errors);
+			Notify::danger($errors);
 
 			return Response::redirect('admin/categories/edit/' . $id);
 		}
@@ -79,7 +79,7 @@ Route::collection(array('before' => 'auth,admin,csrf'), function() {
 		if($errors = $validator->errors()) {
 			Input::flash();
 
-			Notify::error($errors);
+			Notify::danger($errors);
 
 			return Response::redirect('admin/categories/add');
 		}
@@ -104,7 +104,7 @@ Route::collection(array('before' => 'auth,admin,csrf'), function() {
 		$total = Category::count();
 
 		if($total == 1) {
-			Notify::error(__('categories.delete_error'));
+			Notify::danger(__('categories.delete_error'));
 
 			return Response::redirect('admin/categories/edit/' . $id);
 		}

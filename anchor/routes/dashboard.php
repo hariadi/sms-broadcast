@@ -10,14 +10,19 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 		$userid = Auth::user()->id;
 		$vars['messages'] = Notify::read();
 		$vars['client'] = Dashboard::view($userid);
+		$vars['transactions'] = Transaction::paginate($page, Config::get('meta.posts_per_page'));
 
-		$perpage = Config::meta('posts_per_page');
-		$total = Transaction::count();
-		$transactions = Transaction::where('client', '=', $userid)->sort('created', 'desc')->take($perpage)->skip(($page - 1) * $perpage)->get();
+		$uuid = $vars['client']->credit;
 
-		$pagination = new Paginator($transactions, $total, $page, $perpage, Uri::to('admin/dashboard'));
+		$credit_avail = Credit::where('client', '=', $userid)->column(array('credit'));
+		$credit_use = Transaction::where('client', '=', $userid)->where('guid', '=', $uuid)->sum('credit');
 
-		$vars['transactions'] = $pagination;
+		$vars['credits'] = array(
+			'available' => $credit_avail,
+			'used' => $credit_use,
+			'balance' => $credit_avail + $credit_use
+		);
+		
 
 		$vars['statuses'] = array(
 			'inactive' => __('global.inactive'),

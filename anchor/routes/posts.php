@@ -110,7 +110,7 @@ Route::collection(array('before' => 'auth,admin,csrf'), function() {
 		if($errors = $validator->errors()) {
 			Input::flash();
 
-			Notify::error($errors);
+			Notify::danger($errors);
 
 			return Response::redirect('admin/posts/edit/' . $id);
 		}
@@ -196,7 +196,7 @@ Route::collection(array('before' => 'auth,admin,csrf'), function() {
 		if($errors = $validator->errors()) {
 			Input::flash();
 
-			Notify::error($errors);
+			Notify::danger($errors);
 
 			return Response::redirect('admin/posts/add');
 		}

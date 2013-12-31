@@ -39,6 +39,10 @@ class Extend extends Base {
 				break;
 
 			case 'image':
+				if( ! empty($extend->value->filename)) {
+						$value = asset('content/avatar/' . $extend->value->filename);
+					}
+					break;
 			case 'file':
 				if( ! empty($extend->value->filename)) {
 					$value = asset('content/' . $extend->value->filename);
@@ -77,6 +81,26 @@ class Extend extends Base {
 				break;
 
 			case 'image':
+
+				$value = isset($item->value->filename) ? $item->value->filename : '';
+
+					$html = '<span class="current-file">';
+
+					if($value) {
+						$html .= '<img src="' . asset('content/avatar/' . $value) . '" class="img-responsive">';
+					}
+
+					$html .= '</span>
+						<span class="file">
+						<input id="extend_' . $item->key . '" name="extend[' . $item->key . ']" type="file">
+						</span>';
+
+					if($value) {
+						$html .= '<label>Remove ' . $item->label . ':</label>
+						<input type="checkbox" name="extend_remove[' . $item->key . ']" value="1">';
+					}
+				break;
+
 			case 'file':
 				$value = isset($item->value->filename) ? $item->value->filename : '';
 
@@ -92,8 +116,7 @@ class Extend extends Base {
 					</span>';
 
 				if($value) {
-					$html .= '</p><p>
-					<label>Remove ' . $item->label . ':</label>
+					$html .= '<label>Remove ' . $item->label . ':</label>
 					<input type="checkbox" name="extend_remove[' . $item->key . ']" value="1">';
 				}
 
@@ -135,15 +158,21 @@ class Extend extends Base {
 		return $files;
 	}
 
-	public static function upload($file) {
+	public static function upload($file, $avatar = false) {
+
 		$storage = PATH . 'content' . DS;
+
+		if ($avatar) {
+			$storage .= 'avatar' . DS;
+		}
 
 		if(!is_dir($storage)) mkdir($storage);
 
 		$ext = pathinfo($file['name'], PATHINFO_EXTENSION);
 
 		// Added rtrim to remove file extension before adding again
-		$filename = slug(rtrim($file['name'], '.' . $ext)) . '.' . $ext;
+		//$filename = slug(rtrim($file['name'], '.' . $ext)) . '.' . $ext;
+		$filename = hash('crc32', file_get_contents($file['tmp_name'])) . '.' . $ext;
 		$filepath = $storage . $filename;
 
 		if(move_uploaded_file($file['tmp_name'], $filepath)) {
@@ -160,7 +189,9 @@ class Extend extends Base {
 			$name = basename($file['name']);
 			$ext = pathinfo($file['name'], PATHINFO_EXTENSION);
 
-			if($filepath = static::upload($file)) {
+			$avatar = ($extend->key == 'avatar') ? true : false;
+
+			if($filepath = static::upload($file, $avatar)) {
 				$filename = basename($filepath);
 
 				// resize image

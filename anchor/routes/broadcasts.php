@@ -83,30 +83,32 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 	Route::post('admin/broadcasts/add', function() {
 
 		$input = Input::get(array('sender', 'recipient', 'fromfile', 'message'));
+		$transaction = array();
 		$recipients = array();
 		$input['fromfile'] = $_FILES['fromfile'];
+		$broadcasts = false;
+		$broadcasts_schedule = false;
+
+		if($schedule = Input::get('schedule')) {
+			$input['schedule'] = $schedule;
+			$broadcasts_schedule = true;
+		}
 
 		if(empty($input['sender'])) {
 			$input['sender'] = '63663';
 		}
 
 		if(!empty($input['recipient'])) {
-
 			$recipient = $input['recipient'];
 			unset($input['recipient']);
 			$input['recipient'] = array();
 
 			if (strpos($recipient, ',') !== false) {
-
 			  $input['recipient'] = explode(',', $recipient);
-
 			} else {
-
 				$input['recipient'][] = $recipient;
-
 			}
-
-			
+			$broadcasts = true;
 		}
 
 		$validator = new Validator($input);
@@ -116,7 +118,7 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 			$upload = Upload::factory(PATH . 'content');
 			$upload->file($input['fromfile']);
 			//$upload->set_filename();
-			$upload->set_max_file_size((int)(ini_get('upload_max_filesize')));
+			$upload->set_max_file_size((int) (ini_get('upload_max_filesize')));
 			$upload->set_allowed_mime_types(array('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/excel', 'application/vnd.ms-excel'));
 			$results = $upload->upload();
 
@@ -135,9 +137,11 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 			$data = array();
 			foreach ($Reader as $Row)
 	    {
-	      $data[] = $Row[0];
+	      $input['recipient'][] = $Row[0];
 	    }
-	    $input['recipient'][] = normalize_number($data);	    
+	    $data = normalize_number($input['recipient']);
+	    $input['recipient'] = $data;
+	    $broadcasts = true;
 		}
 
 		//recipients = array_merge($input['recipient'], normalize_number($data));
@@ -161,7 +165,7 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 		if($errors = $validator->errors()) {
 			Input::flash();
 
-			Notify::error($errors);
+			Notify::danger($errors);
 
 			return Response::redirect('admin/broadcasts/add');
 		}
@@ -169,6 +173,32 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 		$user = Auth::user();
 		$input['client'] = $user->id;
 		$input['status'] = 'success';
+
+		if ($broadcasts) {
+			// deduct credit
+			$transaction['client'] = $user->id;
+			$transaction['guid'] = User::where('id', '=', $user->id)->column(array('credit'));
+			$transaction['quantity'] = count($recipients, COUNT_RECURSIVE);
+			$transaction['credit'] = (float) -abs(Config::meta('credit_per_sms') * $transaction['quantity']);
+
+			Transaction::create($transaction);
+
+			// everything setup, lets send some sms
+			$sms = new Isms(Config::meta('isms_username'), Config::meta('isms_password'));
+			$sms->setMessage($input['message']);
+			$sms->setNumber($recipients);
+
+			$response = $sms->send();
+
+			if ($response['code'] != '2000') {
+				$input['status'] = 'failed';
+				Notify::danger($response['raw']);
+				$input['reason'] = Json::encode($response);
+			}
+			//print_r($response);
+		}
+		//exit();
+		
 
 		Broadcast::create($input);
 

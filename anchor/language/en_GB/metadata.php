@@ -42,4 +42,10 @@ return array(
 	// messages
 	'updated' => 'Metadata updated',
 
+	//ISMS
+	'isms_setting' => 'ISMS Setting',
+	'isms_username' => 'ISMS Username',
+	'isms_password' => 'ISMS Password',
+	'credit_per_sms' => 'Credit Per SMS'
+
 );

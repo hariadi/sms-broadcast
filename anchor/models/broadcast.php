@@ -37,7 +37,8 @@ class Broadcast extends Base {
 
 		$count = $query->count();
 
-		$broadcasts = $query->take($per_page)
+		$broadcasts = $query->sort(Base::table('broadcasts.created'), 'desc')
+			->take($per_page)
 			->skip(($page - 1) * $per_page)
 			->get(array(Base::table('broadcasts.*'),
 				Base::table('users.id as client_id'),

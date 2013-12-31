@@ -59,7 +59,7 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 		if($errors = $validator->errors()) {
 			Input::flash();
 
-			Notify::error($errors);
+			Notify::danger($errors);
 
 			return Response::redirect('admin/extend/variables/add');
 		}
@@ -110,7 +110,7 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 		if($errors = $validator->errors()) {
 			Input::flash();
 
-			Notify::error($errors);
+			Notify::danger($errors);
 
 			return Response::redirect('admin/extend/variables/edit/' . $key);
 		}

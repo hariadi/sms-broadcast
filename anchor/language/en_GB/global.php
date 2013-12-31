@@ -11,6 +11,7 @@ return array(
 	// words
 	'save' => 'Save',
 	'back' => 'Back',
+	'backto' => 'Back to %s',
 	'delete' => 'Delete',
 	'broadcast' => 'Broadcast',
 	'update' => 'Update',
@@ -47,6 +48,8 @@ return array(
 	'administrator' => 'Admin',
 	'editor' => 'Editor',
 	'user' => 'User',
+
+	'administration' => 'Administration',
 
 	'log_in' => 'Log in',
 	'login' => 'Login',

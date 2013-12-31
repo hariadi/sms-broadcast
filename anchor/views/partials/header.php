@@ -13,6 +13,10 @@
     <link rel="stylesheet" href="<?php echo asset('anchor/views/assets/css/bootstrap-theme.css'); ?>">
 
     <link rel="stylesheet" href="<?php echo asset('anchor/views/assets/css/custom.css'); ?>">
+
+    <?php if ( Uri::current() == 'admin/broadcasts/add') : ?>
+    <link rel="stylesheet" href="<?php echo asset('anchor/views/assets/css/bootstrap-datetimepicker.min.css'); ?>">
+		<?php endif; ?> 
 	</head>
 	<body class="<?php echo Auth::guest() ? 'login' : 'admin'; ?>">
 
@@ -34,11 +38,8 @@
 	        <ul class="nav navbar-nav">
 	        	
 	        	<?php 
-						$menu = array('dashboard', 'broadcasts');
-						$personalize = ($user = Auth::user() and $user->role == 'administrator') ? 
-							array('posts', 'comments', 'pages', /*'menu',*/ 'categories', 'users', 'extend') :
-							array('profiles');
-						$menu = array_merge($menu, $personalize);
+						$menu = array('dashboard', 'broadcasts', 'profiles');
+						$admin = array('posts', 'comments', 'pages', /*'menu',*/ 'categories', 'users', 'extend');
 						?>
 						<?php foreach($menu as $url): ?>
 						<li <?php if(strpos(Uri::current(), $url) !== false) echo 'class="active"'; ?>>
@@ -47,12 +48,27 @@
 							</a>
 						</li>
 						<?php endforeach; ?>
+						<?php if(Auth::user()->role == 'administrator'): ?>
+						<li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo __('global.administration'); ?> <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <?php foreach($admin as $url): ?>
+								<li <?php if(strpos(Uri::current(), $url) !== false) echo 'class="active"'; ?>>
+									<a href="<?php echo Uri::to('admin/' . $url); ?>">
+										<?php echo ucfirst(__($url . '.' . $url)); ?>
+									</a>
+								</li>
+								<?php endforeach; ?>
+              </ul>
+            </li>
+						<?php endif; ?>
 	        </ul>
 	        <?php endif; ?>
 
 	        <ul class="nav navbar-nav navbar-right">
 	        	<?php if(Auth::user()): ?>
-	        	<li><?php echo Html::link('admin/logout', __('global.logout')); ?></li>
+	        	<li><a href="<?php echo Uri::to('admin/logout'); ?>"><span class="glyphicon glyphicon-off"></span>
+ <?php echo __('global.logout'); ?></a></li>
 	        	<?php else: ?>
             <li>
 							<a href="<?php echo Uri::to('admin/users/login'); ?>"><?php echo __('global.login'); ?></a>

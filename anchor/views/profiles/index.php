@@ -1,46 +1,37 @@
 <?php echo $header; ?>
 
-<hgroup class="wrap">
-	<h1><?php echo __('menu.menu', 'Menu'); ?></h1>
-</hgroup>
+<?php echo Html::link('admin/profiles/edit/' . $user->id, __('global.edit'), array('class' => 'btn btn-lg btn-primary pull-right')); ?>
 
-<section class="wrap">
-	<?php echo $messages; ?>
+<h1 class="page-header"><?php echo __('users.editing_user', $user->username); ?></h1>
 
-	<?php if(count($pages)): ?>
-	<ul class="sortable">
-		<?php foreach($pages as $page): ?>
-		<li class="item" draggable="true">
-			<span data-id="<?php echo $page->id; ?>"><?php echo $page->name; ?></span>
-		</li>
-		<?php endforeach; ?>
-	</ul>
-	<?php else: ?>
-	<p class="empty">
-		<span class="icon"></span>
-		No menu items yet.
-	</p>
-	<?php endif; ?>
-</section>
+<div class="row placeholder">
+    <div class="col-md-2 placeholder">
+      <img src="<?php echo asset('anchor/views/assets/img/jobs-malaysia.png'); ?>" class="img-responsive" alt="Generic placeholder thumbnail">
+    </div>
+    <div class="col-md-4 placeholder">
+        <h3><?php echo $user->real_name; ?></h3>
+        <h5><?php echo __('users.email'); ?>: <span class="badge"><?php echo $user->email; ?></span></h5>
+        <h5><?php echo __('users.bio'); ?>: <?php echo $user->bio; ?></h5>
+        <h5><?php echo __('users.since'); ?>: <?php echo Date::format($user->created); ?></h5>
+    </div>
+    <div class="col-md-6 placeholder">
+        <h3><?php echo __('dashboard.credit'); ?></h3>
+        <ul class="list-group">
+            <li class="list-group-item">
+            <span class="badge"><?php echo $credits['available']; ?></span>
+            <?php echo __('dashboard.available'); ?>
+            </li>
+            <li class="list-group-item">
+            <span class="badge"><?php echo $credits['used']; ?></span>
+            <?php echo __('dashboard.used'); ?>
+            </li>
+            <li class="list-group-item">
+            <span class="badge"><?php echo $credits['balance']; ?></span>
+            <?php echo __('dashboard.total'); ?>
+            </li>
+        </ul>
+    </div>
+</div>
 
-<script src="<?php echo asset('anchor/views/assets/js/sortable.js'); ?>"></script>
-<script>
-	$('.sortable').sortable({
-		element: 'li',
-		dropped: function() {
-			var data = {sort: []};
-
-			$('.sortable span').each(function(index, item) {
-				data.sort.push($(item).data('id'));
-			});
-
-			$.ajax({
-				'type': 'POST',
-				'url': '<?php echo Uri::to("admin/menu/update"); ?>',
-				'data': $.param(data)
-			});
-		}
-	});
-</script>
 
 <?php echo $footer; ?>

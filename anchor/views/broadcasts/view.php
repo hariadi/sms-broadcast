@@ -1,46 +1,68 @@
 <?php echo $header; ?>
 
-<hgroup class="wrap">
-	<h1><?php echo __('broadcasts.edit_broadcast', $broadcast->client_name); ?></h1>
-</hgroup>
+<?php echo Html::link('admin/broadcasts', __('global.back'), array('class' => 'btn btn-lg btn-primary pull-right')); ?>
 
-<section class="wrap">
+<h1 class="page-header"><?php echo __('broadcasts.view_broadcast', $broadcast->id); ?></h1>
 
-	<?php echo $messages; ?>
-	<dl>
-		<dt><?php echo __('global.status'); ?></dt>
-		<dd><?php echo ucfirst($broadcast->status); ?></dd>
+<?php echo $messages; ?>
 
-		<dt><?php echo __('broadcasts.sender'); ?></dt>
-		<dd><?php echo $broadcast->sender; ?></dd>
+<div class="row">
+	<div class="col col-lg-9">
 
-		
-		<?php
-		$recipients = Json::decode($broadcast->recipient);
-		if (!empty($recipients)) { 
-		$count = count($recipients);
-		$recipients = (is_array($recipients)) ? array_slice($recipients, 0, 5) : $recipients;
-		?>
-		<dt><?php echo __('broadcasts.recipient'); ?></dt>
-		<?php if ($count > 1) :?><em>Display only 5 from <?php echo $count ?> numbers</em><?php endif; ?>
-		<?php foreach($recipients as $key => $recipient): ?>
-		<dd><?php echo $recipient ?></dd>
-		<?php endforeach; ?>
-		<?php } ?>
-		<dt><?php echo __('broadcasts.message'); ?></dt>
-		<dd><?php echo $broadcast->message; ?></dd>
+	
 
-		<dt><?php echo __('global.created'); ?></dt>
-		<dd><?php echo $broadcast->created; ?></dd>
-	</dl>
+	<div class="panel panel-default">
+	  <div class="panel-heading"><?php echo __('broadcasts.broadcast_id', $broadcast->id); ?></div>
+	  <!-- List group -->
+	  <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th><?php echo __('global.status'); ?></th>
+            <td><span class="label label-<?php
+						$search  = array('success', 'pending', 'failed');
+						$replace = array('success', 'primary', 'warning');
+						echo str_replace($search, $replace, $broadcast->status); 
+						?>"><?php echo __('broadcasts.' . $broadcast->status); ?></span></td>
+          </tr>
+          <tr>
+            <th><?php echo __('broadcasts.sender'); ?></th>
+            <td><?php echo $broadcast->sender; ?></td>
+          </tr>
+          <?php
+					$recipients = Json::decode($broadcast->recipient);
 
-	<aside class="buttons">
-		<?php echo Html::link('admin/broadcasts/', __('global.back'), array(
-				'class' => 'btn'
-			)); ?>
-	</aside>
+					if (!empty($recipients)) { 
+						$count = count($recipients);
+						$recipients = (is_array($recipients)) ? array_slice($recipients, 0, 5) : $recipients;
+					?>
+					<?php foreach($recipients as $key => $recipient): ?>
+          <tr>
+            <?php if($key === 0) :?><th rowspan="<?php echo $count; ?>"><?php echo __('broadcasts.recipient'); ?></th><?php endif?>
+            <td><code><?php echo $recipient ?></code></td>
+          	
+          </tr><?php endforeach; ?><?php } ?>
+          <tr>
+            <th><?php echo __('broadcasts.message'); ?></th>
+            <td><?php echo $broadcast->message; ?></td>
+          </tr>
+          <tr>
+            <th><?php echo __('global.created'); ?></th>
+            <td><?php echo Date::format($broadcast->created, 'jS F Y h:i A'); ?></td>
+          </tr>
+        </tbody>
+      </table>
+	</div>
+
+			<?php if ($count > 5) :?><em>Display only 5 from <?php echo $count ?> numbers</em><?php endif; ?>
 
 
-</section>
+	</div>
+</div>
 
 <?php echo $footer; ?>

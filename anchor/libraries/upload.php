@@ -144,7 +144,7 @@ class Upload {
 		}
 		
 		//create finfo object
-		$this->finfo = new finfo();
+		//$this->finfo = new finfo();
 		
 	}
 	
@@ -278,7 +278,9 @@ class Upload {
 			'destination'			=> $this->destination,
 			'size_in_bytes'			=> $file_size,
 			'size_in_mb'			=> $this->bytes_to_mb($file_size),
-			'mime'					=> $this->get_file_mime(),
+			// shared host not support fileinfo nor mime_content_type
+			//'mime'					=> $this->get_file_mime(),
+			'mime'					=> $this->file_post['type'],
 			'original_filename'		=> $this->file_post['name'],
 			'tmp_name'				=> $this->file_post['tmp_name'],
 			'post_data'				=> $this->file_post,

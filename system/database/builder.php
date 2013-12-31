@@ -192,5 +192,15 @@ abstract class Builder {
 	public function build_select_count() {
 		return 'SELECT COUNT(*) FROM ' . $this->wrap($this->table) . $this->build();
 	}
+	
+	/**
+	 * Build a select sum query
+	 *
+	 * @param string
+	 * @return string
+	 */
+	public function build_select_sum($column = null) {
+		return 'SELECT COALESCE(SUM(' . $column . '),0) AS ' . $column . ' FROM ' . $this->wrap($this->table) . $this->build();
+	}
 
 }

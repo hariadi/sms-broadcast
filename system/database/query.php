@@ -231,6 +231,17 @@ class Query extends Builder {
 	}
 
 	/**
+	 * Run a sum function on database query
+	 *
+	 * @return string
+	 */
+	public function sum($column = null) {
+		list($result, $statement) = $this->connection->ask($this->build_select_sum($column), $this->bind);
+
+		return $statement->fetchColumn();
+	}
+
+	/**
 	 * Add a where clause to the query
 	 *
 	 * @param string
@@ -301,6 +312,33 @@ class Query extends Builder {
 		return $this;
 	}
 
+	public function multi_join($table, $statements, $operator = 'AND', $type = 'INNER') {
+		if($table instanceof Closure) {
+			list($query, $alias) = $table();
+
+			$this->bind = array_merge($this->bind, $query->bind);
+
+			$table = '(' . $query->build_select() . ') AS ' . $this->wrap($alias);
+		}
+		else $table = $this->wrap($table);
+
+		$joins = $type . ' JOIN ' . $table . ' ON (';
+
+	  foreach ($statements as $key => $column) {
+	    $joins .= $column[0] . ' ' . $column[1] . ' ' . $column[2];
+	    if (next($statements )) {
+	        $joins .= ' ' . $operator . ' ';
+	    }
+	  }
+
+	  $joins .= ')';
+	
+
+		$this->join[] = $joins;
+
+		return $this;
+	}
+
 	/**
 	 * Add a left table join to the query
 	 *
@@ -312,6 +350,10 @@ class Query extends Builder {
 	 */
 	public function left_join($table, $left, $operator, $right) {
 		return $this->join($table, $left, $operator, $right, 'LEFT');
+	}
+
+	public function multi_left_join($table, $statements, $operator = 'AND') {
+		return $this->multi_join($table, $statements, $operator, 'LEFT');
 	}
 
 	/**

@@ -1,45 +1,107 @@
 <?php echo $header; ?>
 
-<hgroup class="wrap">
-	<h1><?php echo __('broadcasts.create_broadcast'); ?></h1>
-</hgroup>
+<h1 class="page-header"><?php echo __('broadcasts.create_broadcast'); ?></h1>
 
-<section class="wrap">
-	<?php echo $messages; ?>
+<?php echo $messages; ?>
 
-	<form method="post" action="<?php echo Uri::to('admin/broadcasts/add'); ?>" novalidate enctype="multipart/form-data">
+<div class="row">
+  <div class="col-lg-8">
+  	<form class="form-horizontal" method="post" action="<?php echo Uri::to('admin/broadcasts/add'); ?>" novalidate enctype="multipart/form-data">
+  		<input name="token" type="hidden" value="<?php echo $token; ?>">
+      <fieldset>
+        <legend>Broadcast Details</legend>
 
-		<input name="token" type="hidden" value="<?php echo $token; ?>">
+        <div class="form-group">
+          <label class="col-lg-2 control-label" for="sender"><?php echo __('broadcasts.sender'); ?></label>
+          <div class="col-lg-10">
+            <?php echo Form::text('sender', Input::previous('sender'), array(
+							'placeholder' => '63663',
+							'class' => 'form-control',
+							'id' => 'sender',
+						)); ?>
+          </div>
+        </div>
 
-		<fieldset class="split">
-			<p>
-				<label for="sender"><?php echo __('broadcasts.sender'); ?>:</label>
-				<input id="sender" name="sender" value="<?php echo Input::previous('sender'); ?>">
-				<em><?php echo __('broadcasts.sender_explain'); ?></em>
-			</p>
-			<p>
-				<label for="recipient"><?php echo __('broadcasts.recipient'); ?>:</label>
-				<input id="recipient" name="recipient" value="<?php echo Input::previous('recipient'); ?>">
-				<em><?php echo __('broadcasts.recipient_explain', 'The recipient for your broadcast.'); ?></em>
-			</p>
-			<p>
-				<label for="fromfile"><?php echo __('broadcasts.fromfile'); ?>:</label>
-				<input type="file" id="fromfile" name="fromfile">
-				<em><?php echo __('broadcasts.fromfile_explain', 'Or upload recipient for your broadcast.'); ?></em>
-			</p>
-			<p>
-				<label for="message"><?php echo __('broadcasts.message'); ?>:</label>
-				<textarea id="message" name="message"><?php echo Input::previous('message'); ?></textarea>
-				<em><?php echo __('broadcasts.message_explain'); ?></em>
-			</p>
-		</fieldset>
+        <div class="form-group">
+          <label class="col-lg-2 control-label" for="recipient"><?php echo __('broadcasts.recipient'); ?></label>
+          <div class="col-lg-10">
+          	<?php echo Form::text('recipient', Input::previous('recipient'), array(
+							'placeholder' => 'Recipient number (separate by comma)',
+							'class' => 'form-control',
+							'id' => 'recipient',
+						)); ?>
+          </div>
+        </div>
 
-		<aside class="buttons">
-			<?php echo Form::button(__('global.broadcast'), array('type' => 'submit', 'class' => 'btn')); ?>
-		</aside>
+        <div class="form-group">
+          <label class="col-lg-2 control-label" for="fromfile"><?php echo __('broadcasts.fromfile'); ?>:</label>
+          <div class="col-lg-10">
+            <?php echo Form::file('fromfile', array(
+              'class' => 'filestyle',
+              'data-classButton' => 'btn btn-primary',
+              'data-classIcon' => 'glyphicon-folder-open',
+              'id' => 'fromfile'
+            )); ?>
+            <p class="help-block">The file must in .txt, .doc, .pdf, and .xls.</p>
+          </div>
 
-	</form>
-</section>
+        </div>
 
+        <div class="form-group">
+          <label class="col-lg-2 control-label" for="message"><?php echo __('broadcasts.message'); ?></label>
+          <div class="col-lg-10">
+          	<?php echo Form::textarea('message', Input::previous('message'), array(
+							'placeholder' => __('broadcasts.message_explain'),
+							'rows' => 3,
+							'class' => 'form-control',
+							'id' => 'message'
+						)); ?>
+          </div>
+        </div>
+
+        <div class="form-group">
+
+          <label class="col-lg-2 control-label" for="schedule"><?php echo __('broadcasts.schedule'); ?></label>
+
+          <div class="col-lg-4">
+
+            <div class="input-group date">
+              <?php echo Form::text('schedule', Input::previous('schedule'), array(
+              'class' => 'form-control',
+              'id' => 'schedule',
+              )); ?>
+              <div class="input-group-btn">
+                <button class="btn btn-default" type="button"><span class="glyphicon glyphicon-calendar"></span></button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="col-lg-10 col-lg-offset-2">
+            <?php echo Form::button(__('global.broadcast'), array('type' => 'submit', 'class' => 'btn btn-primary')); ?>
+          </div>
+        </div>
+      </fieldset>
+    </form>
+  </div>
+  <div class="col-lg-4">
+  	<div class="panel panel-default">
+		  <div class="panel-heading">
+		    <h3 class="panel-title">Info</h3>
+		  </div>
+		  <div class="panel-body">
+		    Please ensure you are meet following criteria:
+		  </div>
+		  <!-- List group -->
+		  <ul class="list-group">
+		    <li class="list-group-item">Format number: 012 345 6789, 6012 345 6789</li>
+		    <li class="list-group-item">Message no longer than 140 character</li>
+		    <li class="list-group-item">Only <code>.xls</code>, <code>.xlsx</code> and <code>.csv</code> file upload suppoerted.</li>
+		  </ul>
+		</div>
+  </div>
+</div>
 
 <?php echo $footer; ?>

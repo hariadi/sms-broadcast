@@ -4,9 +4,11 @@ return array(
 
 	'broadcast' => 'Broadcast',
 	'broadcasts' => 'Broadcasts',
+	'broadcast_id' => 'Broadcast ID: %s',
 
 	'create_broadcast' => 'Create a new broadcast',
 	'edit_broadcast' => 'Editing &ldquo;%s&rdquo;',
+	'view_broadcast' => 'Viewing &ldquo;Broadcast ID: %s&rdquo;',
 
 	// form fields
 	'sender' => 'Sender',
@@ -14,6 +16,7 @@ return array(
 	'sender_missing' => 'Please enter a sender',
 	'recipient_missing' => 'Please enter a recipient',
 	'message_missing' => 'Please enter a message',
+	'schedule' => 'Schedule',
 
 	'success' => 'Success',
 	'pending' => 'Pending',

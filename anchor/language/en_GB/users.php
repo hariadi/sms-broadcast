@@ -7,6 +7,7 @@ return array(
 	'create_user' => 'Create a new user',
 	'add_user' => 'Add a new user',
 	'editing_user' => 'Editing %s&rsquo;s Profile',
+	'update' => 'Update Profile',
 	'remembered' => 'I know my password',
 	'forgotten_password' => 'Forgotten your password?',
 
@@ -19,6 +20,11 @@ return array(
 
 	'user' => 'User',
 	'user_explain' => '',
+
+	'topup' => 'Credit has been top-up',
+	'credit' => 'Credit',
+	'current_credit' => 'Current Credit: <strong><code>%s</code></strong>',
+	'credit_explain' => 'Credit top-up. e.g: <code>100</code>. 1 credit = 1 sms',
 
 	// form fields
 	'real_name' => 'Real Name',

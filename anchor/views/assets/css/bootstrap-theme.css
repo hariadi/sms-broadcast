@@ -161,3 +161,5 @@ body {
 .placeholder img {
   border-radius: 50%;
 }
+
+.control-label { font-weight: bold; }
