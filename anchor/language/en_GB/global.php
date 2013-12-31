@@ -48,6 +48,7 @@ return array(
 	'administrator' => 'Admin',
 	'editor' => 'Editor',
 	'user' => 'User',
+	'client' => 'Client',
 
 	'administration' => 'Administration',
 

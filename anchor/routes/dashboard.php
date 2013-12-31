@@ -14,7 +14,7 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 
 		$uuid = $vars['client']->credit;
 
-		$credit_avail = Credit::where('client', '=', $userid)->column(array('credit'));
+		$credit_avail = Credit::where('client', '=', $userid)->where('uuid', '=', $uuid)->column(array('credit'));
 		$credit_use = Transaction::where('client', '=', $userid)->where('guid', '=', $uuid)->sum('credit');
 
 		$vars['credits'] = array(
@@ -32,7 +32,7 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 		$vars['roles'] = array(
 			'administrator' => __('global.administrator'),
 			'editor' => __('global.editor'),
-			'user' => __('global.user')
+			'client' => __('global.client')
 		);
 
 		return View::create('dashboard/index', $vars)

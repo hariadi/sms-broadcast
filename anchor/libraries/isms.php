@@ -19,6 +19,8 @@ class Isms
 	const SEND     = 'isms_send.php?';
 	const BALANCE  = 'isms_balance.php?';
 	const SCHEDULE = 'isms_scheduler.php?';
+	const REPORT 	 = 'api_sms_history.php?'; 
+	//api_sms_history.php?un=username&pwd=password&date=2013-12-16
 
 	private $_login;
 	private $_password;
@@ -27,6 +29,8 @@ class Isms
 	private $_message;
 	private $_type;
 	private $_sms;
+	private $_format = 'Y-m-d';
+	private $_timezone = 'Asia/Kuala_Lumpur';
 	protected $to = array();
 	protected $response_code = array(
 		'2000' => 'SUCCESS - Message Sent.',
@@ -108,6 +112,15 @@ class Isms
 		return $this->getInfo($result);
 	}
 
+	public function report($date)
+	{
+		$url = self::HOST . self::REPORT;
+		$params = $this->_auth;
+		$params['date'] = $this->formatDate();
+		$result = $this->curl( $url, $params );
+		return $this->formatReport($result);
+	}
+
 	private function addAnNumber($number)
 	{
 		if (is_array($number)) {
@@ -134,6 +147,19 @@ class Isms
     return $number;
   }
 
+  private function formatReport($data)
+	{
+		$value = array();
+		if (!empty($data)) {
+			$reports = explode("||", $data);
+			$keys = array('id', 'destination', 'message', 'charge', 'type', 'date', 'status');
+			foreach ($reports as $pieces) {
+				$value[] = array_combine($keys, explode("|@|", $pieces));
+			}
+		}
+		return $value;
+	}
+
   private function formatNumber($number)
 	{
 		$format = "";
@@ -141,6 +167,21 @@ class Isms
 			$format = implode(";", $number);
 		}
 		return $format;
+	}
+
+	private function formatDate($date = null, $format = null) {
+		
+		if (is_null($date)) {
+			$date = 'now';
+		}
+		if(is_null($format)) {
+			$format = $this->_format;
+		}
+
+		$date = new DateTime($date, new DateTimeZone('GMT'));
+		$date->setTimezone(new DateTimeZone($this->_timezone));
+
+		return $date->format($format);
 	}
 
 	private function getInfo($result)

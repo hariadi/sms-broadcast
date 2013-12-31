@@ -54,7 +54,7 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 		$vars['roles'] = array(
 			'administrator' => __('global.administrator'),
 			'editor' => __('global.editor'),
-			'user' => __('global.user')
+			'client' => __('global.client')
 		);
 
 		return View::create('profiles/edit', $vars)
@@ -129,7 +129,7 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 		$vars['roles'] = array(
 			'administrator' => __('global.administrator'),
 			'editor' => __('global.editor'),
-			'user' => __('global.user')
+			'client' => __('global.client')
 		);
 
 		return View::create('users/add', $vars)

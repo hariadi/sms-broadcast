@@ -19,6 +19,7 @@ return array(
 	'editor_explain' => '',
 
 	'user' => 'User',
+	'client' => 'Client',
 	'user_explain' => '',
 
 	'topup' => 'Credit has been top-up',
