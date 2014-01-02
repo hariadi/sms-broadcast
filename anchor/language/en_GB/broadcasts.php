@@ -18,6 +18,13 @@ return array(
 	'message_missing' => 'Please enter a message',
 	'schedule' => 'Schedule',
 
+	'trigger' => 'Trigger',
+	'onetime' => 'Onetime',
+	'daily' => 'Daily',
+	'weekly' => 'Weekly',
+	'monthly' => 'Monthly',
+	'trigger_explain' => 'Should this schedule run repeatedly?',
+
 	'success' => 'Success',
 	'pending' => 'Pending',
 	'failed' => 'Failed',

@@ -75,6 +75,13 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 		$vars['messages'] = Notify::read();
 		$vars['token'] = Csrf::token();
 
+		$vars['triggers'] = array(
+			'onetime' => __('broadcasts.onetime'),
+			'daily' => __('broadcasts.daily'),
+			'weekly' => __('broadcasts.weekly'),
+			'monthly' => __('broadcasts.monthly')
+		);
+
 		return View::create('broadcasts/add', $vars)
 			->partial('header', 'partials/header')
 			->partial('footer', 'partials/footer');
@@ -91,6 +98,7 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 
 		if($schedule = Input::get('schedule')) {
 			$input['schedule'] = $schedule;
+			$input['trigger'] = Input::get('trigger');
 			$broadcasts_schedule = true;
 		}
 
@@ -188,14 +196,20 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 			$sms->setMessage($input['message']);
 			$sms->setNumber($recipients);
 
-			$response = $sms->send();
 
-			if ($response['code'] != '2000') {
-				$input['status'] = 'failed';
-				Notify::danger($response['raw']);
-				$input['reason'] = Json::encode($response);
+			$input['schedule'] = $schedule;
+			$broadcasts_schedule = true;
+
+			if ($broadcasts_schedule) {
+				$sms->schedule($input['schedule']);
+				$sms->trigger($input['trigger']);
 			}
-			//print_r($response);
+
+			$responses = $sms->send();
+			//we don't want to check it fail or not. always success in system :). we do in isms api report
+			$input['status'] = 'pending';
+			$input['reason'] = Json::encode($responses);
+			//print_r($responses);
 		}
 		//exit();
 		

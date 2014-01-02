@@ -79,6 +79,17 @@
         </div>
 
         <div class="form-group">
+          <label class="col-lg-2 control-label" for="trigger"><?php echo __('broadcasts.trigger'); ?></label>
+          <div class="col-lg-4">
+            <?php echo Form::select('trigger', $triggers, Input::previous('trigger'), array(
+              'class' => 'form-control ',
+              'id' => 'trigger',
+            )); ?>
+            <p class="help-block"><?php echo __('broadcasts.trigger_explain'); ?></p>
+          </div>
+        </div>
+
+        <div class="form-group">
           <div class="col-lg-10 col-lg-offset-2">
             <?php echo Form::button(__('global.broadcast'), array('type' => 'submit', 'class' => 'btn btn-primary')); ?>
           </div>
