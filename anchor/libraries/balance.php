@@ -13,21 +13,40 @@ class Balance {
 
 	public static function check($type = 'update') {
 		$balance = static::touch();
-		$today = date('Y-m-d H:i:s');
-		$table = Base::table('meta');
+		if ($balance) {
+			$today = date('Y-m-d H:i:s');
+			$table = Base::table('meta');
 
-		if ($type === 'setup') {
-			Query::table($table)->insert(array('key' => 'update_balance', 'value' => $balance));
-		} elseif (($type === 'update')) {
-			Query::table($table)->where('key', '=', 'update_balance')->update(array('value' => $balance));
+/*
+			$credit = array();
+			$credit['client'] = $id;
+			$credit['uuid'] = UUID::v4();
+			$input['credit'] = $credit['uuid'];
+			$credit['createdby'] = Auth::user()->id;
+			$credit['credit'] = (float) $topup + Input::get('current_credit');
+			$credit_topup = true;
+
+			$uuid = User::where('id', '=', 1)->column(array('credit'));
+
+			print_r($uuid);
+			exit();
+			
+			$credit_avail = Credit::where('client', '=', $id)->where('uuid', '=', $uuid)->column(array('credit'));
+*/
+			if ($type === 'setup') {
+				Query::table($table)->insert(array('key' => 'update_balance', 'value' => $balance));
+			} elseif (($type === 'update')) {
+				Query::table($table)->where('key', '=', 'update_balance')->update(array('value' => $balance));
+
+			}
+
+			// reload database metadata
+			foreach(Query::table($table)->get() as $item) {
+				$meta[$item->key] = $item->value;
+			}
+
+			Config::set('meta', $meta);
 		}
-
-		// reload database metadata
-		foreach(Query::table($table)->get() as $item) {
-			$meta[$item->key] = $item->value;
-		}
-
-		Config::set('meta', $meta);
 	}
 
 

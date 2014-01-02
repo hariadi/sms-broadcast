@@ -110,6 +110,35 @@ Route::collection(array('before' => 'auth,admin,csrf'), function() {
 		Extend::process('user', $id);
 
 		if ($credit_topup) {
+
+			if ($id != 1) {
+
+				// get TransRec uuid
+				$uuid = User::where('id', '=', 1)->column(array('credit'));
+
+				// get TransRec balance
+				$master_credit = Credit::where('client', '=', 1)->where('uuid', '=', $uuid)->column(array('credit'));
+
+				$transrec = array();
+				//$transrec['master_credit'] = $master_credit;
+				//$transrec['topup'] = Input::get('current_credit');
+				$transrec['client'] = 1;
+				$transrec['uuid'] = UUID::v4();
+				$transrec['createdby'] = Auth::user()->id;
+				$transrec['credit'] = (float) $master_credit - Input::get('current_credit');
+
+
+				//print_r($transrec);
+				//exit();
+
+				// update transrec balance
+				Credit::create($transrec);
+
+				// update current uuid balance reference
+				Query::table(Base::table('users'))->where('id', '=', 1)->update(array('credit' => $transrec['uuid']));
+
+			}
+
 			Credit::create($credit);
 			Notify::success(__('users.topup'));
 		}
