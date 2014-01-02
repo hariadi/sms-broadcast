@@ -71,3 +71,10 @@ function normalize_number($numbers) {
 	}
 	return $result;
 }
+
+function search_for($array, $key, $val) {
+    foreach ($array as $item)
+        if (isset($item[$key]) && $item[$key] == $val)
+            return true;
+    return false;
+}
