@@ -19,7 +19,7 @@ class Isms
 	const SEND     = 'isms_send.php?';
 	const BALANCE  = 'isms_balance.php?';
 	const SCHEDULE = 'isms_scheduler.php?';
-	const REPORT 	 = 'api_sms_history.php?'; 
+	const REPORT 	 = 'api_sms_history.php?';
 	//api_sms_history.php?un=username&pwd=password&date=2013-12-16
 
 	private $_login;
@@ -29,8 +29,11 @@ class Isms
 	private $_message;
 	private $_type;
 	private $_sms;
+	private $_limit = 300;
 	private $_format = 'Y-m-d';
 	private $_timezone = 'Asia/Kuala_Lumpur';
+	private $_schedule = null;
+	private $_trigger = 'onetime';
 	protected $to = array();
 	protected $response_code = array(
 		'2000' => 'SUCCESS - Message Sent.',
@@ -64,6 +67,16 @@ class Isms
     return $this->_message = rawurlencode($msg);
   }
 
+  public function schedule($date)
+  {
+    return $this->_schedule = date_parse($date);
+  }
+
+  public function trigger($trigger)
+  {
+    return $this->_trigger = $trigger;
+  }
+
   public function getMessage()
   {
     return $this->_message;
@@ -85,21 +98,48 @@ class Isms
   }
 
 	public function send()
-	{
+	{	
+		$schedule = false;	
 		$url = self::HOST . self::SEND;
-		$params = $this->_auth;
 
-		$params['dstno'] = is_array($this->_to) ? $this->formatNumber($this->_to) : $this->_to;
+		// schedule?
+		if (! is_null($this->_schedule)) {
+			$url = self::HOST . self::SCHEDULE;
+			$params['date'] = $this->_schedule['year'] . '-' . $this->_schedule['month'] . '-' . $this->_schedule['day'];
+			$params['hour'] = $this->_schedule['hour'];
+			$params['min'] = $this->_schedule['minute'];
+			$params['week'] = $this->_schedule['week'];
+			$params['month'] = $this->_schedule['month'];
+			$params['day'] = $this->_schedule['day'];
+			$schedule = true;
+		}
+
+		$params = $this->_auth;
 		$params['msg'] = $this->_message;
 		$params['type'] = $this->_type;
 		$params['sendid'] = $this->_sender;
 
-		$result = $this->curl( $url, $params );
+		$destination = array();
+		$curls = array();
 
+		if (count($this->_to)) {
+			$destination = array_chunk($this->_to, $this->_limit);
+			foreach ($destination as $key => $value) {
+				$params['dstno'] = $this->formatNumber($value);
+				$curls[] = array('url' => $url, 'post' => $params);
+			}
+		}
+
+		$results = $this->curl( $curls );
+		
 		$response = array();
-		$response['raw'] = $result;
-		$response['code'] = $this->getInfo($result);
-		$response['description'] = $this->getAnswer( $response['code'] );
+		foreach ($results as $id => $result) {
+			$response[] = array(
+				'raw' => $result, 
+				'code' => $this->getCode($result),
+				'description' => $this->getAnswer($this->getCode($result)
+			));
+		}
 
 		return $response;
 	}
@@ -108,8 +148,9 @@ class Isms
 	{
 		$url = self::HOST . self::BALANCE;
 		$params = $this->_auth;
-		$result = $this->curl( $url, $params );
-		return $this->getInfo($result);
+		$curls = array('url' => $url, 'post' => $params);
+		$result = $this->curl( $curls );
+		return $this->getCode($result[0]);
 	}
 
 	public function report($date)
@@ -169,6 +210,12 @@ class Isms
 		return $format;
 	}
 
+	private function validDate($date, $format = 'Y-m-d H:i:s')
+	{
+	    $d = DateTime::createFromFormat($format, $date);
+	    return $d && $d->format($format) == $date;
+	}
+
 	private function formatDate($date = null, $format = null) {
 		
 		if (is_null($date)) {
@@ -184,7 +231,7 @@ class Isms
 		return $date->format($format);
 	}
 
-	private function getInfo($result)
+	private function getCode($result)
 	{
 		return preg_replace("/[^0-9.-]/", "", $result);
 	}
@@ -212,9 +259,8 @@ class Isms
 		}
 	}
 
-	private function curl( $url, $params = array() )
+	private function curlold( $url, $params = array() )
 	{
-		// Use SSL: http://www.php.net/manual/en/function.curl-setopt-array.php#89850
 		$ch = curl_init();
 		$options = array(
     	CURLOPT_RETURNTRANSFER => TRUE,
@@ -231,5 +277,63 @@ class Isms
 		curl_close( $ch );
 
 		return $result;
+	}
+
+	private function curl($data) {
+ 
+	  // array of curl handles
+	  $curly = array();
+	  // data to be returned
+	  $result = array();
+	 
+	  // multi handle
+	  $mh = curl_multi_init();
+	 
+	  // loop through $data and create curl handles
+	  // then add them to the multi-handle
+	  foreach ($data as $id => $d) {
+	 
+	    $curly[$id] = curl_init();
+	 
+	    $url = (is_array($d) && !empty($d['url'])) ? $d['url'] : $d;
+
+	    $options = array(
+	    	CURLOPT_RETURNTRANSFER => 1,
+	    	CURLOPT_URL => $url,
+	    	CURLOPT_HEADER         => 0,
+	    	CURLOPT_ENCODING       => "",
+				CURLOPT_SSL_VERIFYHOST => 0,
+	    	CURLOPT_SSL_VERIFYPEER => 0,
+			);
+
+	    // it is post?
+			if (is_array($d)) {
+	      if (!empty($d['post'])) {
+	      	$options[CURLOPT_POST] = 1;
+	      	$options[CURLOPT_POSTFIELDS] = $d['post'];
+	      }
+	    }
+
+	 		curl_setopt_array($curly[$id], $options);
+	    curl_multi_add_handle($mh, $curly[$id]);
+	  }
+	 
+	  // execute the handles
+	  $running = null;
+	  do {
+	    curl_multi_exec($mh, $running);
+	  } while($running > 0);
+	 
+	 
+	  // get content and remove handles
+	  foreach($curly as $id => $c) {
+	    $result[$id] = curl_multi_getcontent($c);
+	    curl_multi_remove_handle($mh, $c);
+	  }
+	 
+	  // all done
+	  curl_multi_close($mh);
+	 
+	  return $result;
 	}
 }
