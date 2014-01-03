@@ -111,6 +111,7 @@ Route::collection(array('before' => 'auth,admin,csrf'), function() {
 
 		if ($credit_topup) {
 
+			// update TransRec account but not when TranRec account get top-up
 			if ($id != 1) {
 
 				// get TransRec uuid
@@ -120,16 +121,10 @@ Route::collection(array('before' => 'auth,admin,csrf'), function() {
 				$master_credit = Credit::where('client', '=', 1)->where('uuid', '=', $uuid)->column(array('credit'));
 
 				$transrec = array();
-				//$transrec['master_credit'] = $master_credit;
-				//$transrec['topup'] = Input::get('current_credit');
 				$transrec['client'] = 1;
 				$transrec['uuid'] = UUID::v4();
 				$transrec['createdby'] = Auth::user()->id;
-				$transrec['credit'] = (float) $master_credit - Input::get('current_credit');
-
-
-				//print_r($transrec);
-				//exit();
+				$transrec['credit'] = (float) $master_credit - Input::get('credit');
 
 				// update transrec balance
 				Credit::create($transrec);
