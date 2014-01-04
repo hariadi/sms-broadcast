@@ -56,6 +56,7 @@
 							'class' => 'form-control',
 							'id' => 'message'
 						)); ?>
+            <p class="help-block" id="message_feedback"></p>
           </div>
         </div>
 

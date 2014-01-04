@@ -50,9 +50,22 @@
 		    format: 'yyyy-mm-dd hh:ii'
 	    });
 		</script>
-		<?php endif; ?> remove($value, $uri)
+		<?php endif; ?>
 		<?php //if ( Uri::current() ==  Uri::remove('/', Uri::current())) : ?>
 		<script type="text/javascript">
+
+		$(document).ready(function() {
+		    var text_max = 99;
+		    $('#message_feedback').html(text_max + ' characters remaining');
+
+		    $('#message').keyup(function() {
+		        var text_length = $('#message').val().length;
+		        var text_remaining = text_max - text_length;
+
+		        $('#message_feedback').html(text_remaining + ' characters remaining');
+		    });
+		});
+		
 	    $(function() {
 
 	    	var select = $('#field'), attrs = $('.hide');
@@ -71,6 +84,8 @@
 					}
 
 				});
+
+
 
 				/*/select.change(function() {
 				    if($(this).val() == 'image') {

@@ -207,7 +207,7 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 			}
 			
 			//we don't want to check it fail or not. always success in system :). we do in isms api report
-			$input['status'] = 'pending';
+			//$input['status'] = 'pending';
 			$input['reason'] = Json::encode($responses);
 			//print_r($responses);
 		}
