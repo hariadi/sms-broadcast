@@ -181,6 +181,7 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 		$user = Auth::user();
 		$input['client'] = $user->id;
 		$input['status'] = 'success';
+		$input['created'] = Date::mysql('now');
 
 		if ($broadcasts) {
 			// deduct credit
@@ -188,6 +189,7 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 			$transaction['guid'] = User::where('id', '=', $user->id)->column(array('credit'));
 			$transaction['quantity'] = count($recipients, COUNT_RECURSIVE);
 			$transaction['credit'] = (float) -abs(Config::meta('credit_per_sms') * $transaction['quantity']);
+			$transaction['created'] = $input['created'];
 
 			Transaction::create($transaction);
 
