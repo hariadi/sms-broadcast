@@ -59,7 +59,7 @@ Route::post('admin/login', array('before' => 'csrf', 'main' => function() {
 
 	// If admin login, notify about current balance
 	if (Auth::user()->role == 'administrator') {
-		$balance = Config::meta('update_balance');
+		$balance = (float) Config::meta('update_balance');
 
 		if(version_compare($balance, 10.0, '<')) {
 			Notify::warning(__('users.current_credit', $balance));

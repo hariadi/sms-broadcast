@@ -6,6 +6,7 @@ return array(
 
 	'create_post' => 'Create a new post',
 	'noposts_desc' => 'You don’t have any posts!',
+	'editing_post' => 'Editing <em>%s&rsquo;s</em>',
 
 	// form fields
 	'title' => 'Post title',

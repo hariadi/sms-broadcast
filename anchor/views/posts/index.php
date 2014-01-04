@@ -1,52 +1,42 @@
 <?php echo $header; ?>
 
-<hgroup class="wrap">
-	<h1><?php echo __('posts.posts'); ?></h1>
+<?php echo Html::link('admin/posts/add', __('posts.create_post'), array('class' => 'btn btn-lg btn-primary pull-right')); ?>
 
-	<?php if($posts->count): ?>
-	<nav>
-		<?php echo Html::link('admin/posts/add', __('posts.create_post'), array('class' => 'btn')); ?>
-	</nav>
-	<?php endif; ?>
-</hgroup>
+<h1 class="page-header"><?php echo __('posts.posts'); ?></h1>
 
-<section class="wrap">
-	<?php echo $messages; ?>
+<?php echo $messages; ?>
 
-	<nav class="sidebar">
-		<?php echo Html::link('admin/posts', __('global.all'), array(
-			'class' => isset($category) ? '' : 'active'
-		)); ?>
-	    <?php foreach($categories as $cat): ?>
-		<?php echo Html::link('admin/posts/category/' . $cat->slug, $cat->title, array(
-			'class' => (isset($category) and $category->id == $cat->id) ? 'active' : ''
-		)); ?>
-	    <?php endforeach; ?>
-	</nav>
+<div class="row">
+	<div class="col col-lg-9">
 
-	<?php if($posts->count): ?>
-	<ul class="main list">
-		<?php foreach($posts->results as $article): ?>
-		<li>
-			<a href="<?php echo Uri::to('admin/posts/edit/' . $article->id); ?>">
-				<strong><?php echo $article->title; ?></strong>
-				<span>
-					<time><?php echo Date::format($article->created); ?></time>
-
-					<em class="status <?php echo $article->status; ?>" title="<?php echo __('global.' . $article->status); ?>">
-						<?php echo __('global.' . $article->status); ?>
-					</em>
-				</span>
-
-				<p><?php echo strip_tags($article->description); ?></p>
-			</a>
-		</li>
-		<?php endforeach; ?>
-	</ul>
-
-	<aside class="paging"><?php echo $posts->links(); ?></aside>
-
-	<?php else: ?>
+		<?php if($posts->count): ?>
+		<div class="table-responsive">
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th>#</th>
+						<th>Title</th>
+						<th>Created</th>
+						<th>Status</th>
+					</tr>
+				</thead>
+				<tbody>
+					<?php foreach($posts->results as $key => $article): ?>
+					<tr class="status draft">
+						<td><?php echo $key+1; ?></td>
+						<td><a href="<?php echo Uri::to('admin/posts/edit/' . $article->id); ?>" title=""><?php echo $article->title; ?></a></td>
+						<td><?php echo Date::format($article->created); ?></td>
+						<td><span class="label label-<?php
+						$search  = array('published', 'draft', 'archived');
+						$replace = array('success', 'primary', 'info');
+						echo str_replace($search, $replace, $article->status); 
+						?>"><?php echo __('global.' . $article->status); ?></span></td>
+					</tr>
+				<?php endforeach; ?>
+			</tbody>
+		</table>
+		</div>
+		<?php else: ?>
 
 	<p class="empty posts">
 		<span class="icon"></span>
@@ -55,6 +45,21 @@
 	</p>
 
 	<?php endif; ?>
-</section>
+	</div>
+	<div class="col col-lg-3">
+	<nav class="list-group sidebar">
+		<?php echo Html::link('admin/posts', __('global.all'), array(
+			'class' => isset($category) ? 'list-group-item' : 'list-group-item active'
+		)); ?>
+	    <?php foreach($categories as $cat): ?>
+		<?php echo Html::link('admin/posts/category/' . $cat->slug, $cat->title, array(
+			'class' => (isset($category) and $category->id == $cat->id) ? 'list-group-item active' : 'list-group-item'
+		)); ?>
+	    <?php endforeach; ?>
+	</nav>
+
+	
+</div>
+</div>
 
 <?php echo $footer; ?>

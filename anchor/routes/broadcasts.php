@@ -196,16 +196,14 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 			$sms->setMessage($input['message']);
 			$sms->setNumber($recipients);
 
-
-			$input['schedule'] = $schedule;
-			$broadcasts_schedule = true;
-
 			if ($broadcasts_schedule) {
 				$sms->schedule($input['schedule']);
 				$sms->trigger($input['trigger']);
+				$responses = $sms->schedule();
+			} else {
+				$responses = $sms->send();
 			}
-
-			$responses = $sms->send();
+			
 			//we don't want to check it fail or not. always success in system :). we do in isms api report
 			$input['status'] = 'pending';
 			$input['reason'] = Json::encode($responses);
