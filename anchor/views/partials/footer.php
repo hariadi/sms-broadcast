@@ -46,42 +46,13 @@
     <script src="<?php echo asset('anchor/views/assets/js/bootstrap-filestyle.min.js'); ?>"></script>
     <script src="<?php echo asset('anchor/views/assets/js/bootstrap-datetimepicker.min.js'); ?>"></script>
 		<script type="text/javascript">
-	    $('#start_date').datetimepicker({
+	    $('#schedule').datetimepicker({
 		    format: 'yyyy-mm-dd hh:ii'
 	    });
 		</script>
-		<?php endif; ?>
+		<?php endif; ?> remove($value, $uri)
 		<?php //if ( Uri::current() ==  Uri::remove('/', Uri::current())) : ?>
 		<script type="text/javascript">
-
-		$(document).ready(function() {
-		    var text_max = 99;
-		    $('#message_feedback').html(text_max + ' characters remaining');
-
-		    $('#message').keyup(function() {
-		        var text_length = $('#message').val().length;
-		        var text_remaining = text_max - text_length;
-
-		        $('#message_feedback').html(text_remaining + ' characters remaining');
-		    });
-
-		    $('#date, #weekly, #monthly, #days').hide();
-		    $('#schedule').change(function() {
-				    if($(this).val() == 'daily') {
-				    	$("#date").show();
-				    	$('#weekly, #monthly, #days').hide();
-				    } else if($(this).val() == 'weekly') {
-				    	$("#weekly").show();
-				    	$("#monthly, #days").hide();
-				    } else if($(this).val() == 'monthly') {
-				    	$("#weekly").hide();
-				    	$("#monthly, #days").show();
-				    } else {
-				      $('#date, #weekly, #monthly, #days').hide();
-				    }
-				});
-		});
-
 	    $(function() {
 
 	    	var select = $('#field'), attrs = $('.hide');
@@ -93,7 +64,6 @@
 					//$("#my-div").removeClass('hide');
 					if(value == 'image') {
 						attrs.removeClass('hide');
-						$("#my-div").removeClass('hide');
 						//attrs.show();
 					}
 					else if(value == 'file') {
@@ -101,8 +71,6 @@
 					}
 
 				});
-
-
 
 				/*/select.change(function() {
 				    if($(this).val() == 'image') {

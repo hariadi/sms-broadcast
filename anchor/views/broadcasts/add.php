@@ -56,79 +56,39 @@
 							'class' => 'form-control',
 							'id' => 'message'
 						)); ?>
-            <p class="help-block" id="message_feedback"></p>
           </div>
         </div>
 
         <div class="form-group">
+
           <label class="col-lg-2 control-label" for="schedule"><?php echo __('broadcasts.schedule'); ?></label>
-          <div class="col-lg-4">
-            <?php echo Form::select('schedule', $schedules, Input::previous('schedule'), array(
-              'class' => 'form-control ',
-              'id' => 'schedule',
-            )); ?>
-          </div>
-        </div>
-
-        <div class="form-group" id="date">
-
-          <label class="col-lg-2 control-label" for="start_date"><?php echo __('broadcasts.start_date'); ?></label>
 
           <div class="col-lg-4">
+
             <div class="input-group date">
-              <?php echo Form::text('start_date', Input::previous('start_date'), array(
+              <?php echo Form::text('schedule', Input::previous('schedule'), array(
               'class' => 'form-control',
-              'id' => 'start_date',
+              'id' => 'schedule',
               )); ?>
               <div class="input-group-btn">
                 <button class="btn btn-default" type="button"><span class="glyphicon glyphicon-calendar"></span></button>
               </div>
             </div>
+
           </div>
         </div>
 
-        <div class="form-group" id="weekly">
-          <div class="control-label col-lg-2">
-            <label class="control-label"><?php echo __('broadcasts.weekdays'); ?></label>
-          </div>
-          <div class="col-lg-10">
-            <?php foreach(array('monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday') as $weekday): ?>
-              <label class="col-lg-4">
-                <?php echo Form::checkbox('weekdays[]', $weekday, Input::previous('weekdays'), array(
-                'id' => $weekday
-              )); ?> <?php echo __('broadcasts.' . $weekday); ?> </label>
-            <?php endforeach; ?>
+        <div class="form-group">
+          <label class="col-lg-2 control-label" for="trigger"><?php echo __('broadcasts.trigger'); ?></label>
+          <div class="col-lg-4">
+            <?php echo Form::select('trigger', $triggers, Input::previous('trigger'), array(
+              'class' => 'form-control ',
+              'id' => 'trigger',
+            )); ?>
+            <p class="help-block"><?php echo __('broadcasts.trigger_explain'); ?></p>
           </div>
         </div>
 
-        <div class="form-group" id="monthly">
-          <div class="control-label col-lg-2">
-            <label class="control-label"><?php echo __('broadcasts.monthly'); ?></label>
-          </div>
-          <div class="col-lg-10">
-            <?php foreach(array('jan', 'feb', 'mac', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec') as $key => $monthly):
-            ?>
-              <label class="col-lg-4">
-                <?php echo Form::checkbox('monthly[]', $monthly, Input::previous('monthly'), array(
-                'id' => $monthly
-              )); ?> <?php echo __('broadcasts.' . $monthly); ?> </label>
-            <?php endforeach; ?>
-          </div>
-        </div>
-
-        <div class="form-group" id="days">
-          <div class="control-label col-lg-2">
-            <label class="control-label"><?php echo __('broadcasts.days'); ?></label>
-          </div>
-          <div class="col-lg-10">
-            <?php for($days=1; $days<32; $days++): $day = ($days < 10) ? '0' . $days : $days; ?>
-            
-              <label class="col-lg-2">
-                <?php echo Form::checkbox('days[]', $day, Input::previous('days')); ?> <?php echo $day; ?> </label>
-            <?php endfor; ?>
-          </div>
-        </div>
-        
         <div class="form-group">
           <div class="col-lg-10 col-lg-offset-2">
             <?php echo Form::button(__('global.broadcast'), array('type' => 'submit', 'class' => 'btn btn-primary')); ?>

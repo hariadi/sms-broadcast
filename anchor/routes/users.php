@@ -58,8 +58,6 @@ Route::collection(array('before' => 'auth,admin,csrf'), function() {
 		$password_reset = false;
 		$credit_topup = false;
 
-		$input['created'] = Date::mysql('now');
-
 		$credit = array();
 
 		if($password = Input::get('password')) {
@@ -72,7 +70,6 @@ Route::collection(array('before' => 'auth,admin,csrf'), function() {
 			$credit['client'] = $id;
 			$credit['uuid'] = UUID::v4();
 			$input['credit'] = $credit['uuid'];
-			$credit['created'] = $input['created'];
 			$credit['createdby'] = Auth::user()->id;
 			$credit['credit'] = (float) $topup + Input::get('current_credit');
 			$credit_topup = true;
@@ -128,7 +125,6 @@ Route::collection(array('before' => 'auth,admin,csrf'), function() {
 				$transrec['uuid'] = UUID::v4();
 				$transrec['createdby'] = Auth::user()->id;
 				$transrec['credit'] = (float) $master_credit - Input::get('credit');
-				$transrec['created'] = Date::mysql('now');
 
 				// update transrec balance
 				Credit::create($transrec);
@@ -174,8 +170,6 @@ Route::collection(array('before' => 'auth,admin,csrf'), function() {
 
 	Route::post('admin/users/add', function() {
 		$input = Input::get(array('username', 'email', 'real_name', 'password', 'bio', 'status', 'role'));
-
-		$input['created'] = Date::mysql('now');
 
 		$validator = new Validator($input);
 

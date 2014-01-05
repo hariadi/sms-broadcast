@@ -75,7 +75,7 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 		$vars['messages'] = Notify::read();
 		$vars['token'] = Csrf::token();
 
-		$vars['schedules'] = array(
+		$vars['triggers'] = array(
 			'onetime' => __('broadcasts.onetime'),
 			'daily' => __('broadcasts.daily'),
 			'weekly' => __('broadcasts.weekly'),
@@ -89,15 +89,16 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 
 	Route::post('admin/broadcasts/add', function() {
 
-		$input = Input::get(array('sender', 'recipient', 'fromfile', 'message', 'schedule'));
+		$input = Input::get(array('sender', 'recipient', 'fromfile', 'message'));
 		$transaction = array();
 		$recipients = array();
 		$input['fromfile'] = $_FILES['fromfile'];
 		$broadcasts = false;
 		$broadcasts_schedule = false;
 
-		if($schedule != 'onetime' or !empty($schedule)) {
+		if($schedule = Input::get('schedule')) {
 			$input['schedule'] = $schedule;
+			$input['trigger'] = Input::get('trigger');
 			$broadcasts_schedule = true;
 		}
 
@@ -180,7 +181,6 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 		$user = Auth::user();
 		$input['client'] = $user->id;
 		$input['status'] = 'success';
-		$input['created'] = Date::mysql('now');
 
 		if ($broadcasts) {
 			// deduct credit
@@ -188,7 +188,6 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 			$transaction['guid'] = User::where('id', '=', $user->id)->column(array('credit'));
 			$transaction['quantity'] = count($recipients, COUNT_RECURSIVE);
 			$transaction['credit'] = (float) -abs(Config::meta('credit_per_sms') * $transaction['quantity']);
-			$transaction['created'] = $input['created'];
 
 			Transaction::create($transaction);
 
@@ -206,7 +205,7 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 			}
 			
 			//we don't want to check it fail or not. always success in system :). we do in isms api report
-			//$input['status'] = 'pending';
+			$input['status'] = 'pending';
 			$input['reason'] = Json::encode($responses);
 			//print_r($responses);
 		}
