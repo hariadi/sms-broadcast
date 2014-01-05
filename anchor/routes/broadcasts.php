@@ -75,7 +75,7 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 		$vars['messages'] = Notify::read();
 		$vars['token'] = Csrf::token();
 
-		$vars['triggers'] = array(
+		$vars['schedules'] = array(
 			'onetime' => __('broadcasts.onetime'),
 			'daily' => __('broadcasts.daily'),
 			'weekly' => __('broadcasts.weekly'),
@@ -89,16 +89,15 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 
 	Route::post('admin/broadcasts/add', function() {
 
-		$input = Input::get(array('sender', 'recipient', 'fromfile', 'message'));
+		$input = Input::get(array('sender', 'recipient', 'fromfile', 'message', 'schedule'));
 		$transaction = array();
 		$recipients = array();
 		$input['fromfile'] = $_FILES['fromfile'];
 		$broadcasts = false;
 		$broadcasts_schedule = false;
 
-		if($schedule = Input::get('schedule')) {
+		if($schedule != 'onetime' or !empty($schedule)) {
 			$input['schedule'] = $schedule;
-			$input['trigger'] = Input::get('trigger');
 			$broadcasts_schedule = true;
 		}
 

@@ -46,7 +46,7 @@
     <script src="<?php echo asset('anchor/views/assets/js/bootstrap-filestyle.min.js'); ?>"></script>
     <script src="<?php echo asset('anchor/views/assets/js/bootstrap-datetimepicker.min.js'); ?>"></script>
 		<script type="text/javascript">
-	    $('#schedule').datetimepicker({
+	    $('#start_date').datetimepicker({
 		    format: 'yyyy-mm-dd hh:ii'
 	    });
 		</script>
@@ -64,8 +64,24 @@
 
 		        $('#message_feedback').html(text_remaining + ' characters remaining');
 		    });
+
+		    $('#date, #weekly, #monthly, #days').hide();
+		    $('#schedule').change(function() {
+				    if($(this).val() == 'daily') {
+				    	$("#date").show();
+				    	$('#weekly, #monthly, #days').hide();
+				    } else if($(this).val() == 'weekly') {
+				    	$("#weekly").show();
+				    	$("#monthly, #days").hide();
+				    } else if($(this).val() == 'monthly') {
+				    	$("#weekly").hide();
+				    	$("#monthly, #days").show();
+				    } else {
+				      $('#date, #weekly, #monthly, #days').hide();
+				    }
+				});
 		});
-		
+
 	    $(function() {
 
 	    	var select = $('#field'), attrs = $('.hide');
@@ -77,6 +93,7 @@
 					//$("#my-div").removeClass('hide');
 					if(value == 'image') {
 						attrs.removeClass('hide');
+						$("#my-div").removeClass('hide');
 						//attrs.show();
 					}
 					else if(value == 'file') {
