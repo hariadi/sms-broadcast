@@ -47,7 +47,8 @@
         <?php if($transactions->count): ?>
         <?php foreach($transactions->results as $transaction): ?>
         <tr>
-          <td><a href="<?php echo Uri::to('admin/broadcasts/view/')  . $transaction->id; ?>"><?php echo $transaction->id; ?></a></td>
+          <!--td><a href="<?php echo Uri::to('admin/broadcasts/view/')  . $transaction->id; ?>"><?php echo $transaction->id; ?></a></td-->
+          <td><?php echo $transaction->id; ?></td>
           <td><?php echo $transaction->quantity; ?></td>
           <td><?php echo $transaction->credit; ?></td>
           <td><?php echo Date::format($transaction->created, 'jS F Y h:i A'); ?></td>
@@ -60,6 +61,13 @@
         <?php endif; ?>
         </tbody>
     </table>
+
+    <?php if ($transactions->links()) : ?>
+        <ul class="pagination">
+            <?php echo $transactions->links(); ?>
+        </ul>
+        <?php endif; ?>
+
 </div>
 
 <?php echo $footer; ?>

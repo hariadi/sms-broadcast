@@ -19,6 +19,10 @@ class Transaction extends Base {
 	public static function paginate($page = 1, $perpage = 10) {
 
 		$query = static::left_join(Base::table('users'), Base::table('users.id'), '=', Base::table('transactions.client'));
+		
+		if ($id = Auth::user()->id) {
+			$query = $query->where(Base::table('transactions.client'), '=', $id);
+		}
 
 		$count = $query->count();
 
