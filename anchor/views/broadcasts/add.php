@@ -70,6 +70,19 @@
           </div>
         </div>
 
+        <div class="form-group" id="description">
+          <label class="col-lg-2 control-label" for="description"><?php echo __('broadcasts.description'); ?></label>
+          <div class="col-lg-10">
+            <?php echo Form::textarea('description', Input::previous('description'), array(
+              'placeholder' => __('broadcasts.description_explain'),
+              'rows' => 3,
+              'class' => 'form-control',
+              'id' => 'description'
+            )); ?>
+            <p class="help-block" id="message_feedback"></p>
+          </div>
+        </div>
+
         <div class="form-group" id="date">
 
           <label class="col-lg-2 control-label" for="start_date"><?php echo __('broadcasts.start_date'); ?></label>
@@ -92,9 +105,9 @@
             <label class="control-label"><?php echo __('broadcasts.weekdays'); ?></label>
           </div>
           <div class="col-lg-10">
-            <?php foreach(array('monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday') as $weekday): ?>
+            <?php foreach(array('monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday') as $key => $weekday): ?>
               <label class="col-lg-4">
-                <?php echo Form::checkbox('weekdays[]', $weekday, Input::previous('weekdays'), array(
+                <?php echo Form::checkbox('weekdays[]', $key+1, Input::previous('weekdays'), array(
                 'id' => $weekday
               )); ?> <?php echo __('broadcasts.' . $weekday); ?> </label>
             <?php endforeach; ?>
@@ -109,7 +122,7 @@
             <?php foreach(array('jan', 'feb', 'mac', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec') as $key => $monthly):
             ?>
               <label class="col-lg-4">
-                <?php echo Form::checkbox('monthly[]', $monthly, Input::previous('monthly'), array(
+                <?php echo Form::checkbox('monthly[]', $key+1, Input::previous('monthly'), array(
                 'id' => $monthly
               )); ?> <?php echo __('broadcasts.' . $monthly); ?> </label>
             <?php endforeach; ?>
@@ -124,7 +137,7 @@
             <?php for($days=1; $days<32; $days++): $day = ($days < 10) ? '0' . $days : $days; ?>
             
               <label class="col-lg-2">
-                <?php echo Form::checkbox('days[]', $day, Input::previous('days')); ?> <?php echo $day; ?> </label>
+                <?php echo Form::checkbox('days[]', $days, Input::previous('days')); ?> <?php echo $day; ?> </label>
             <?php endfor; ?>
           </div>
         </div>

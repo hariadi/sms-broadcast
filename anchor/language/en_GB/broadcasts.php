@@ -16,6 +16,7 @@ return array(
 	'sender_missing' => 'Please enter a sender',
 	'recipient_missing' => 'Please enter a recipient',
 	'message_missing' => 'Please enter a message',
+	'start_date_missing'=> 'Please enter start date',
 
 	// Schedule
 	'schedule' => 'Schedule',
@@ -28,6 +29,7 @@ return array(
 	'weekdays' => 'WeekDays',
 	'days' => 'Days',
 	'schedule_explain' => 'Should this schedule run repeatedly?',
+
 
 	'monday' => 'Monday',
   'tuesday' => 'Tuesday',
@@ -62,6 +64,9 @@ return array(
 
 	'message' => 'Message',
 	'message_explain' => 'What your broadcast is about.',
+
+	'description' => 'Description',
+	'description_explain' => '',
 
 	// messages
 	'created' => 'Your new broadcast has been added.',

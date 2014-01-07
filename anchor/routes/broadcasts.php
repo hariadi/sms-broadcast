@@ -89,16 +89,56 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 
 	Route::post('admin/broadcasts/add', function() {
 
-		$input = Input::get(array('sender', 'recipient', 'fromfile', 'message', 'schedule'));
+		$input = Input::get(array('sender', 'recipient', 'fromfile', 'message'));
 		$transaction = array();
 		$recipients = array();
+		$schedules = array();
 		$input['fromfile'] = $_FILES['fromfile'];
 		$broadcasts = false;
 		$broadcasts_schedule = false;
 
-		if($schedule != 'onetime' or !empty($schedule)) {
-			$input['schedule'] = $schedule;
+		if($schedule = Input::get('schedule') and $schedule != 'onetime') {
+			$schedules['schedule'] = $schedule;
 			$broadcasts_schedule = true;
+		}
+
+		if ($broadcasts_schedule) {
+
+			if($schedules['schedule'] != 'onetime') {
+
+				$schedules['start'] = Input::get('start_date') ?: Date::mysql('now');
+				$schedules['description'] = Input::get('description');
+
+				switch ($schedules['schedule']) :
+
+					case 'daily':
+
+						$schedules['week'] = range_number(array(), 1, 7);
+						$schedules['month'] = range_number(array(), 1, 12);
+						$schedules['day'] = range_number(array(), 1, 31);
+
+						break;
+
+					case 'weekly':
+
+						$schedules['week'] = range_number(Input::get('weekdays'), 1, 7);
+						$schedules['month'] = range_number(array(), 1, 12);
+						$schedules['day'] = range_number(array(), 1, 31);
+
+						break;
+
+					case 'monthly':
+
+						$schedules['week'] = range_number(array(), 1, 7);
+						$schedules['month'] = range_number(Input::get('monthly'), 1, 12);
+						$schedules['day'] = range_number(Input::get('days'), 1, 31);
+
+						break;
+
+					default:
+						break;
+				endswitch;
+			}
 		}
 
 		if(empty($input['sender'])) {
@@ -165,6 +205,13 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 
 		}
 
+		if($broadcasts ) {
+
+			$validator->check('start_date')
+			->is_max(3, __('broadcasts.start_date_missing'));
+
+		}
+
 		$validator->check('message')
 			->is_max(3, __('broadcasts.message_missing'));
 		
@@ -182,8 +229,10 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 		$input['status'] = 'success';
 		$input['created'] = Date::mysql('now');
 
+
+
 		if ($broadcasts) {
-			// deduct credit
+
 			$transaction['client'] = $user->id;
 			$transaction['guid'] = User::where('id', '=', $user->id)->column(array('credit'));
 			$transaction['quantity'] = count($recipients, COUNT_RECURSIVE);
@@ -192,28 +241,37 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 
 			Transaction::create($transaction);
 
-			// everything setup, lets send some sms
 			$sms = new Isms(Config::meta('isms_username'), Config::meta('isms_password'));
 			$sms->setMessage($input['message']);
 			$sms->setNumber($recipients);
 
 			if ($broadcasts_schedule) {
-				$sms->schedule($input['schedule']);
-				$sms->trigger($input['trigger']);
-				$responses = $sms->schedule();
-			} else {
-				$responses = $sms->send();
-			}
-			
-			//we don't want to check it fail or not. always success in system :). we do in isms api report
-			//$input['status'] = 'pending';
-			$input['reason'] = Json::encode($responses);
-			//print_r($responses);
-		}
-		//exit();
-		
 
-		Broadcast::create($input);
+				$sms->schedule(
+					$schedules['start'], 
+					$schedules['schedule'], 
+					$schedules['description'], 
+					$schedules['week'], 
+					$schedules['month'], 
+					$schedules['day']
+				);
+			}
+
+			$responses = $sms->send();
+
+			$input['reason'] = Json::encode($responses);
+
+			$broadcast = Broadcast::create($input);
+
+			if ($broadcasts_schedule && $responses) {
+
+				$schedules['broadcast'] = $broadcast->id;
+				$schedules['id'] = $responses[0]['raw'];
+				Schedule::create($schedules);
+				Notify::success(__('schedules.created'));
+
+			}
+		}
 
 		Notify::success(__('broadcasts.created'));
 
