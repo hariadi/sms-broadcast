@@ -53,35 +53,6 @@
 		<?php endif; ?> remove($value, $uri)
 		<?php //if ( Uri::current() ==  Uri::remove('/', Uri::current())) : ?>
 		<script type="text/javascript">
-
-		$(document).ready(function() {
-		    var text_max = 153;
-		    $('#message_feedback').html(text_max + ' characters remaining');
-
-		    $('#message').keyup(function() {
-		        var text_length = $('#message').val().length;
-		        var text_remaining = text_max - text_length;
-
-		        $('#message_feedback').html(text_remaining + ' characters remaining');
-		    });
-
-		    $('#date, #description, #weekly, #monthly, #days').hide();
-		    $('#schedule').change(function() {
-				    if($(this).val() == 'daily') {
-				    	$("#date, #description").show();
-				    	$('#weekly, #monthly, #days').hide();
-				    } else if($(this).val() == 'weekly') {
-				    	$("#weekly, #description").show();
-				    	$("#monthly, #days").hide();
-				    } else if($(this).val() == 'monthly') {
-				    	$("#weekly").hide();
-				    	$("#description, #monthly, #days").show();
-				    } else {
-				      $('#description, #date, #weekly, #monthly, #days').hide();
-				    }
-				});
-		});
-
 	    $(function() {
 
 	    	var select = $('#field'), attrs = $('.hide');

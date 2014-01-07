@@ -28,11 +28,12 @@ class Isms
 	private $_sender;
 	private $_message;
 	private $_type;
-	private $_keyword;
+	private $_sms;
 	private $_limit = 300;
 	private $_format = 'Y-m-d';
 	private $_timezone = 'Asia/Kuala_Lumpur';
 	private $_schedule = null;
+	private $_trigger = 'onetime';
 	protected $to = array();
 	protected $response_code = array(
 		'2000' => 'SUCCESS - Message Sent.',
@@ -51,8 +52,7 @@ class Isms
 	{
 		$this->_login = $login;
 		$this->_password = $pwd;
-		$this->_sender = '63633';
-		$this->_keyword = 'JOBSMY';
+		$this->_sender ='63633';
 		$this->_type = 1;
 		$this->_auth = $this->getAuthParams();
 	}
@@ -62,30 +62,19 @@ class Isms
     return $this->addAnNumber($number);
   }
 
-  public function setKeyword($keyword)
-  {
-    return $this->_keyword = $keyword;
-  }
-
   public function setMessage($msg)
   {
-    return $this->_message = $this->_keyword . ': '. rawurlencode($msg);
+    return $this->_message = rawurlencode($msg);
   }
 
-  public function schedule($start, $trigger, $description, $week, $month, $day)
+  public function schedule($date)
   {
-  	$schedule = array();
-  	$schedule['start'] = date_parse($start);
-		$schedule['date'] = date('Y-m-d', strtotime($start));
-  	$schedule['description'] = $description;
-  	$schedule['trigger'] = $trigger;
-  	$schedule['hour'] = date('H', strtotime($start));
-  	$schedule['minute'] = date('i', strtotime($start));
-  	$schedule['week'] = $week;
-  	$schedule['month'] = $month;
-  	$schedule['day'] = $day;
-  	$this->_schedule = $schedule;
-  	return $this->_schedule;
+    return $this->_schedule = date_parse($date);
+  }
+
+  public function trigger($trigger)
+  {
+    return $this->_trigger = $trigger;
   }
 
   public function getMessage()
@@ -112,14 +101,11 @@ class Isms
 	{	
 		$schedule = false;	
 		$url = self::HOST . self::SEND;
-		$params = $this->_auth;
 
 		// schedule?
-		if ($this->_schedule) {
+		if (! is_null($this->_schedule)) {
 			$url = self::HOST . self::SCHEDULE;
-			$params['date'] = $this->_schedule['date'];
-			$params['det'] = $this->_schedule['description'];
-			$params['tr'] = $this->_schedule['trigger'];
+			$params['date'] = $this->_schedule['year'] . '-' . $this->_schedule['month'] . '-' . $this->_schedule['day'];
 			$params['hour'] = $this->_schedule['hour'];
 			$params['min'] = $this->_schedule['minute'];
 			$params['week'] = $this->_schedule['week'];
@@ -127,7 +113,8 @@ class Isms
 			$params['day'] = $this->_schedule['day'];
 			$schedule = true;
 		}
-		
+
+		$params = $this->_auth;
 		$params['msg'] = $this->_message;
 		$params['type'] = $this->_type;
 		$params['sendid'] = $this->_sender;
@@ -135,7 +122,7 @@ class Isms
 		$destination = array();
 		$curls = array();
 
-		if (!empty($this->_to)) {
+		if (count($this->_to)) {
 			$destination = array_chunk($this->_to, $this->_limit);
 			foreach ($destination as $key => $value) {
 				$params['dstno'] = $this->formatNumber($value);

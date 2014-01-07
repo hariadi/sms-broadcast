@@ -1,6 +1,6 @@
 <?php echo $header; ?>
 
-<?php echo Html::link('admin/profiles', __('global.back'), array('class' => 'btn btn-lg btn-primary pull-right')); ?>
+<?php echo Html::link('admin/users', __('global.back'), array('class' => 'btn btn-lg btn-primary pull-right')); ?>
 
 <h1 class="page-header"><?php echo __('users.editing_user', $user->username); ?></h1>
 
@@ -9,11 +9,29 @@
 <div class="row">
   <div class="col-lg-12">
 
-  	<form class="form-horizontal" method="post" action="<?php echo Uri::to('admin/profiles/edit/'); ?>" novalidate  autocomplete="off" enctype="multipart/form-data">
+  	<form class="form-horizontal" method="post" action="<?php echo Uri::to('admin/users/edit/' . $user->id); ?>" novalidate  autocomplete="off">
 
 		<input name="token" type="hidden" value="<?php echo $token; ?>">
 
 		<fieldset class="col-lg-8">
+
+		
+
+			<div class="form-group">
+				<div class="col-lg-4 control-label" >
+					<img src="<?php echo asset('content/avatar/jobs-malaysia.png')?>" alt="..." style="width: 150px; height: 150px;">
+				</div>
+        
+        <div class="col-lg-8">
+          <?php echo Form::file('avatar', array(
+              'class' => 'filestyle',
+              'data-classButton' => 'btn btn-primary',
+              'data-classIcon' => 'glyphicon-folder-open',
+              'id' => 'avatar'
+            )); ?>
+        </div>
+      </div>
+	
 
 			<div class="form-group">
         <label class="col-lg-2 control-label" for="real_name"><?php echo __('users.real_name'); ?></label>
@@ -33,6 +51,44 @@
 						'class' => 'form-control',
 						'id' => 'bio'
 					)); ?>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="col-lg-2 control-label" for="status"><?php echo __('users.status'); ?></label>
+        <div class="col-lg-4">
+          <?php echo Form::select('status', $statuses, Input::previous('status', $user->status), array(
+						'class' => 'form-control ',
+						'id' => 'status',
+					)); ?>
+					<p class="help-block"><?php echo __('users.status_explain'); ?></p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="col-lg-2 control-label" for="role"><?php echo __('users.role'); ?></label>
+        <div class="col-lg-4">
+          <?php echo Form::select('role', $roles, Input::previous('role', $user->role), array(
+						'class' => 'form-control ',
+						'id' => 'role',
+					)); ?>
+					<p class="help-block"><?php echo __('users.role_explain'); ?></p>
+        </div>
+      </div>
+
+      <input name="current_credit" type="hidden" value="<?php echo $credit['balance']; ?>">
+
+      <div class="form-group">
+        <label class="col-lg-2 control-label" for="credit"><?php echo __('users.credit'); ?></label>
+        <div class="col-lg-5">
+          <?php echo Form::text('credit', Input::previous('credit'), array(
+						'class' => 'form-control',
+						'id' => 'credit',
+					)); ?>
+					<p class="help-block"><?php echo __('users.credit_explain'); ?></p>
+        </div>
+        <div class="col-lg-4">
+        <p><?php echo __('users.current_credit', $credit['balance']); ?></p>
         </div>
       </div>
 
@@ -77,16 +133,6 @@
 					)); ?>
 			  </div>
 			</div>
-
-			<?php if ($fields) : foreach($fields as $field) : ?>
-
-			<div class="form-group">
-        <label class="col-lg-2 control-label" for="<?php echo $field->key; ?>"><?php echo $field->label; ?></label>
-        <div class="col-lg-10">
-        	<?php echo Extend::html($field); ?>
-        </div>
-      </div>
-    	<?php endforeach; endif; ?>
 
 			
 		</fieldset>

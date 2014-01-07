@@ -9,6 +9,5 @@ return array(
 	'available' => 'Available',
 	'used' => 'Used',
 	'total' => 'Total',
-	'no_transactions' => 'No transactions',
 
 );

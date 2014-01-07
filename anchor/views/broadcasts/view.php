@@ -1,6 +1,7 @@
 <?php echo $header; ?>
 
 <?php echo Html::link('admin/broadcasts', __('global.back'), array('class' => 'btn btn-lg btn-primary pull-right')); ?>
+
 <h1 class="page-header"><?php echo __('broadcasts.view_broadcast', $broadcast->id); ?></h1>
 
 <?php echo $messages; ?>

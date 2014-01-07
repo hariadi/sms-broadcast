@@ -16,42 +16,14 @@ return array(
 	'sender_missing' => 'Please enter a sender',
 	'recipient_missing' => 'Please enter a recipient',
 	'message_missing' => 'Please enter a message',
-	'start_date_missing'=> 'Please enter start date',
-
-	// Schedule
 	'schedule' => 'Schedule',
-	'keyword' => 'Keyword',
-	'start_date' => 'Start',
+
 	'trigger' => 'Trigger',
 	'onetime' => 'Onetime',
 	'daily' => 'Daily',
 	'weekly' => 'Weekly',
 	'monthly' => 'Monthly',
-	'weekdays' => 'WeekDays',
-	'days' => 'Days',
-	'schedule_explain' => 'Should this schedule run repeatedly?',
-
-
-	'monday' => 'Monday',
-  'tuesday' => 'Tuesday',
-  'wednesday' => 'Wednesday',
-  'thursday' => 'Thursday',
-  'friday' => 'Friday',
-  'saturday' => 'Saturday',
- 	'sunday' => 'Sunday',
-
- 	'jan' => 'January',
-  'feb' => 'February',
-  'mac' => 'Mac',
-  'apr' => 'April',
-  'may' => 'May',
-  'jun' => 'Jun',
-  'jul' => 'Julai',
- 	'aug' => 'August',
- 	'sep' => 'September',
- 	'oct' => 'October',
- 	'nov' => 'November',
- 	'dec' => 'December',
+	'trigger_explain' => 'Should this schedule run repeatedly?',
 
 	'success' => 'Success',
 	'pending' => 'Pending',
@@ -65,9 +37,6 @@ return array(
 
 	'message' => 'Message',
 	'message_explain' => 'What your broadcast is about.',
-
-	'description' => 'Description',
-	'description_explain' => '',
 
 	// messages
 	'created' => 'Your new broadcast has been added.',
