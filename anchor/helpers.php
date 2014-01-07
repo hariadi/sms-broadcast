@@ -78,3 +78,19 @@ function search_for($array, $key, $val) {
             return true;
     return false;
 }
+
+function range_number($array, $start = 1, $end = 31) {
+		if (empty($array)) {
+			$numbers = array();
+	  	for ($number=$start; $number < ($end+1); $number++) { 
+				$numbers[] = $number;
+			}
+			$implode = $numbers;
+		} else {
+			$implode = $array;
+		}
+    return implode(',', $implode);
+}
+
+
+
