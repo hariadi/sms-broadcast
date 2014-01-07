@@ -55,7 +55,7 @@
 		<script type="text/javascript">
 
 		$(document).ready(function() {
-		    var text_max = 99;
+		    var text_max = 153;
 		    $('#message_feedback').html(text_max + ' characters remaining');
 
 		    $('#message').keyup(function() {
@@ -65,19 +65,19 @@
 		        $('#message_feedback').html(text_remaining + ' characters remaining');
 		    });
 
-		    $('#date, #weekly, #monthly, #days').hide();
+		    $('#date, #description, #weekly, #monthly, #days').hide();
 		    $('#schedule').change(function() {
 				    if($(this).val() == 'daily') {
-				    	$("#date").show();
+				    	$("#date, #description").show();
 				    	$('#weekly, #monthly, #days').hide();
 				    } else if($(this).val() == 'weekly') {
-				    	$("#weekly").show();
+				    	$("#weekly, #description").show();
 				    	$("#monthly, #days").hide();
 				    } else if($(this).val() == 'monthly') {
 				    	$("#weekly").hide();
-				    	$("#monthly, #days").show();
+				    	$("#description, #monthly, #days").show();
 				    } else {
-				      $('#date, #weekly, #monthly, #days').hide();
+				      $('#description, #date, #weekly, #monthly, #days').hide();
 				    }
 				});
 		});
