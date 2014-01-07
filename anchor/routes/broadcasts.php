@@ -229,8 +229,6 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 		$input['status'] = 'success';
 		$input['created'] = Date::mysql('now');
 
-
-
 		if ($broadcasts) {
 
 			$transaction['client'] = $user->id;
@@ -244,6 +242,10 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 			$sms = new Isms(Config::meta('isms_username'), Config::meta('isms_password'));
 			$sms->setMessage($input['message']);
 			$sms->setNumber($recipients);
+
+			if($keyword = Input::get('keyword')) {
+				$sms->setKeyword($keyword);
+			}
 
 			if ($broadcasts_schedule) {
 

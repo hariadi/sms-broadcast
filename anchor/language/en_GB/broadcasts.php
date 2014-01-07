@@ -20,6 +20,7 @@ return array(
 
 	// Schedule
 	'schedule' => 'Schedule',
+	'keyword' => 'Keyword',
 	'start_date' => 'Start',
 	'trigger' => 'Trigger',
 	'onetime' => 'Onetime',

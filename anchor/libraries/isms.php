@@ -28,7 +28,7 @@ class Isms
 	private $_sender;
 	private $_message;
 	private $_type;
-	private $_keyword = 'JOBSMY';
+	private $_keyword;
 	private $_limit = 300;
 	private $_format = 'Y-m-d';
 	private $_timezone = 'Asia/Kuala_Lumpur';
@@ -51,7 +51,8 @@ class Isms
 	{
 		$this->_login = $login;
 		$this->_password = $pwd;
-		$this->_sender ='63633';
+		$this->_sender = '63633';
+		$this->_keyword = 'JOBSMY';
 		$this->_type = 1;
 		$this->_auth = $this->getAuthParams();
 	}
@@ -59,6 +60,11 @@ class Isms
 	public function setNumber($number)
   {
     return $this->addAnNumber($number);
+  }
+
+  public function setKeyword($keyword)
+  {
+    return $this->_keyword = $keyword;
   }
 
   public function setMessage($msg)

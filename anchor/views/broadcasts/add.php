@@ -23,6 +23,17 @@
         </div>
 
         <div class="form-group">
+          <label class="col-lg-2 control-label" for="keyword"><?php echo __('broadcasts.keyword'); ?></label>
+          <div class="col-lg-10">
+            <?php echo Form::text('keyword', Input::previous('keyword'), array(
+              'placeholder' => 'JOBSMY',
+              'class' => 'form-control',
+              'id' => 'keyword',
+            )); ?>
+          </div>
+        </div>
+
+        <div class="form-group">
           <label class="col-lg-2 control-label" for="recipient"><?php echo __('broadcasts.recipient'); ?></label>
           <div class="col-lg-10">
           	<?php echo Form::text('recipient', Input::previous('recipient'), array(
