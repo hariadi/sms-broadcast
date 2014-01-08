@@ -1,12 +1,14 @@
 <?php echo $header; ?>
 
-<?php echo Html::link('admin/profiles/edit/' . $user->id, __('global.edit'), array('class' => 'btn btn-lg btn-primary pull-right')); ?>
+<?php echo Html::link('admin/profiles/edit/', __('global.edit'), array('class' => 'btn btn-lg btn-primary pull-right')); ?>
 
 <h1 class="page-header"><?php echo __('users.editing_user', $user->username); ?></h1>
 
 <div class="row placeholder">
     <div class="col-md-2 placeholder">
-      <img src="<?php echo asset('anchor/views/assets/img/jobs-malaysia.png'); ?>" class="img-responsive" alt="Generic placeholder thumbnail">
+        <?php $img = ($fields) ? $fields[0]->value->filename: 'jobs-malaysia.png'; ?>
+      <img src="<?php echo asset('content/avatar/' . $img); ?>" class="img-responsive" alt="Generic placeholder thumbnail">
+      
     </div>
     <div class="col-md-4 placeholder">
         <h3><?php echo $user->real_name; ?></h3>

@@ -28,12 +28,11 @@ class Isms
 	private $_sender;
 	private $_message;
 	private $_type;
-	private $_sms;
+	private $_keyword;
 	private $_limit = 300;
 	private $_format = 'Y-m-d';
 	private $_timezone = 'Asia/Kuala_Lumpur';
 	private $_schedule = null;
-	private $_trigger = 'onetime';
 	protected $to = array();
 	protected $response_code = array(
 		'2000' => 'SUCCESS - Message Sent.',
@@ -52,7 +51,8 @@ class Isms
 	{
 		$this->_login = $login;
 		$this->_password = $pwd;
-		$this->_sender ='63633';
+		$this->_sender = '63633';
+		$this->_keyword = 'JOBSMY';
 		$this->_type = 1;
 		$this->_auth = $this->getAuthParams();
 	}
@@ -62,19 +62,36 @@ class Isms
     return $this->addAnNumber($number);
   }
 
+  public function setKeyword($keyword)
+  {
+    return $this->_keyword = $keyword;
+  }
+
   public function setMessage($msg)
   {
-    return $this->_message = rawurlencode($msg);
+    return $this->_message = $this->_keyword . ': '. rawurlencode($msg);
   }
 
-  public function schedule($date)
+  public function schedule($start, $trigger, $description, $week, $month, $day, $sid = null, $action = null)
   {
-    return $this->_schedule = date_parse($date);
-  }
+  	$schedule = array();
+  	$schedule['start'] = date_parse($start);
+		$schedule['date'] = date('Y-m-d', strtotime($start));
+  	$schedule['description'] = $description;
+  	$schedule['trigger'] = $trigger;
+  	$schedule['hour'] = date('H', strtotime($start));
+  	$schedule['minute'] = $this->normalizeMinute($start);
+  	$schedule['week'] = $week;
+  	$schedule['month'] = $month;
+  	$schedule['day'] = $day;
 
-  public function trigger($trigger)
-  {
-    return $this->_trigger = $trigger;
+  	if ($sid) {
+  		$schedule['scid'] = $sid;
+  		$schedule['action'] = $action;
+  	}
+  	
+  	$this->_schedule = $schedule;
+  	return $this->_schedule;
   }
 
   public function getMessage()
@@ -101,11 +118,19 @@ class Isms
 	{	
 		$schedule = false;	
 		$url = self::HOST . self::SEND;
+		$params = $this->_auth;
 
 		// schedule?
-		if (! is_null($this->_schedule)) {
+		if ($this->_schedule) {
 			$url = self::HOST . self::SCHEDULE;
-			$params['date'] = $this->_schedule['year'] . '-' . $this->_schedule['month'] . '-' . $this->_schedule['day'];
+			if (array_key_exists('scid', $this->_schedule)) {
+				$params['scid'] = $this->_schedule['scid'];
+				$params['action'] = 'update';
+			}
+
+			$params['date'] = $this->_schedule['date'];
+			$params['det'] = $this->_schedule['description'];
+			$params['tr'] = $this->_schedule['trigger'];
 			$params['hour'] = $this->_schedule['hour'];
 			$params['min'] = $this->_schedule['minute'];
 			$params['week'] = $this->_schedule['week'];
@@ -113,8 +138,7 @@ class Isms
 			$params['day'] = $this->_schedule['day'];
 			$schedule = true;
 		}
-
-		$params = $this->_auth;
+		
 		$params['msg'] = $this->_message;
 		$params['type'] = $this->_type;
 		$params['sendid'] = $this->_sender;
@@ -122,7 +146,7 @@ class Isms
 		$destination = array();
 		$curls = array();
 
-		if (count($this->_to)) {
+		if (!empty($this->_to)) {
 			$destination = array_chunk($this->_to, $this->_limit);
 			foreach ($destination as $key => $value) {
 				$params['dstno'] = $this->formatNumber($value);
@@ -144,6 +168,17 @@ class Isms
 		return $response;
 	}
 
+	public function delete($scid)
+	{
+		$url = self::HOST . self::SCHEDULE;
+		$params = $this->_auth;
+		$params['scid'] = $scid;
+		$params['action'] = 'delete';
+		$curls = array('url' => $url, 'post' => $params);
+		$result = $this->curl( $curls );
+		return $this->getCode($result[0]);
+	}
+
 	public function balance()
 	{
 		$url = self::HOST . self::BALANCE;
@@ -158,7 +193,8 @@ class Isms
 		$url = self::HOST . self::REPORT;
 		$params = $this->_auth;
 		$params['date'] = $this->formatDate();
-		$result = $this->curl( $url, $params );
+		$curls = array('url' => $url, 'post' => $params);
+		$result = $this->curl( $curls );
 		return $this->formatReport($result);
 	}
 
@@ -173,6 +209,11 @@ class Isms
 			$this->_to[] = $number;
 		}
 		
+	}
+
+	function normalizeMinute($timestring) {
+	    $minutes = date('i', strtotime($timestring));
+	    return $minutes - ($minutes % 15);
 	}
 
 	private function normalizeNumber($number, $countryCode = 60)
@@ -257,26 +298,6 @@ class Isms
 		if ( isset( $this->response_code[$code] ) ) {
 			return $this->response_code[$code];
 		}
-	}
-
-	private function curlold( $url, $params = array() )
-	{
-		$ch = curl_init();
-		$options = array(
-    	CURLOPT_RETURNTRANSFER => TRUE,
-    	CURLOPT_URL => $url,
-    	CURLOPT_HEADER         => false,
-    	CURLOPT_ENCODING       => "",
-    	CURLOPT_POST            => 1,
-			CURLOPT_POSTFIELDS => $params,
-			CURLOPT_SSL_VERIFYHOST => 0,
-    	CURLOPT_SSL_VERIFYPEER => false,
-		);
-		curl_setopt_array( $ch, $options );
-		$result = curl_exec( $ch );
-		curl_close( $ch );
-
-		return $result;
 	}
 
 	private function curl($data) {

@@ -20,6 +20,8 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 			'balance' => $credit_avail + $credit_use
 		);
 
+		$vars['fields'] = Extend::fields('user', Auth::user()->id);
+
 		return View::create('profiles/index', $vars)
 			->partial('header', 'partials/header')
 			->partial('footer', 'partials/footer');
@@ -57,6 +59,8 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 			'client' => __('global.client')
 		);
 
+		$vars['fields'] = Extend::fields('user', $id);
+
 		return View::create('profiles/edit', $vars)
 			->partial('header', 'partials/header')
 			->partial('footer', 'partials/footer');
@@ -64,18 +68,13 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 
 	Route::post('admin/profiles/edit', function() {
 		$id = Auth::user()->id;
-		$input = Input::get(array('username', 'email', 'real_name', 'bio', 'status', 'role'));
+		$input = Input::get(array('username', 'email', 'real_name', 'bio'));
 		$password_reset = false;
 		$avatar_reset = false;
 
 		if($password = Input::get('password')) {
 			$input['password'] = $password;
 			$password_reset = true;
-		}
-
-		if($avatar = Input::get('avatar')) {
-			$input['avatar'] = $avatar;
-			$avatar_reset = true;
 		}
 
 		$validator = new Validator($input);
@@ -108,10 +107,11 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 		}
 
 		User::update($id, $input);
+		Extend::process('user', $id);
 
 		Notify::success(__('users.updated'));
 
-		return Response::redirect('admin/profiles/edit/' . $id);
+		return Response::redirect('admin/profiles/edit/');
 	});
 
 	/*

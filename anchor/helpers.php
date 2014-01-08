@@ -78,3 +78,42 @@ function search_for($array, $key, $val) {
             return true;
     return false;
 }
+
+function range_number($array, $start = 1, $end = 31) {
+		if (empty($array)) {
+			$numbers = array();
+	  	for ($number=$start; $number < ($end+1); $number++) { 
+				$numbers[] = $number;
+			}
+			$implode = $numbers;
+		} else {
+			$implode = $array;
+		}
+    return implode(',', $implode);
+}
+
+function schedule_name($item, $type) {
+
+	$items = explode(',', $item);
+
+	$months = array(1 => 'January', 2 => 'February', 3 => 'March', 4 => 'April', 5 => 'May', 6 => 'June', 7 => 'July', 8 => 'August', 9 => 'September', 10 => 'October', 11 => 'November', 12 => 'December');
+
+	$weeks = array(1 => 'Monday', 2 => 'Tuesday', 3 => 'Wednesday', 4 => 'Thursday', 5 => 'Friday', 6 => 'Saturday', 7 => 'Sunday');
+
+
+	$filter = ($type == 'monthly') ? $months : $weeks;
+
+	$schedule = array_intersect_key($filter, array_flip($items));
+
+	return implode(', ', $schedule);
+}
+
+function abbreviation($number) {
+    $ends = array('th','st','nd','rd','th','th','th','th','th','th');
+		return (($number %100) >= 11 && ($number%100) <= 13) ? $number. 'th' : $number. $ends[$number % 10];
+}
+
+
+
+
+

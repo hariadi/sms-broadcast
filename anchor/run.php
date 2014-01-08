@@ -43,6 +43,7 @@ if(is_admin()) {
 	require APP . 'routes/admin' . EXT;
 	require APP . 'routes/dashboard' . EXT;
 	require APP . 'routes/broadcasts' . EXT;
+	require APP . 'routes/schedules' . EXT;
 	require APP . 'routes/profiles' . EXT;
 	require APP . 'routes/categories' . EXT;
 	require APP . 'routes/comments' . EXT;

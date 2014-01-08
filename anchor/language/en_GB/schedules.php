@@ -2,17 +2,17 @@
 
 return array(
 
-	'broadcast' => 'Broadcast',
-	'broadcasts' => 'Broadcasts',
-	'broadcast_id' => 'Broadcast ID: %s',
+	'schedule' => 'Schedule',
+	'schedules' => 'Schedules',
+	'schedule_id' => 'Schedule ID: %s',
 
-	'create_broadcast' => 'Create a new broadcast',
-	'edit_broadcast' => 'Editing &ldquo;%s&rdquo;',
-	'view_broadcast' => 'Viewing &ldquo;Broadcast ID: %s&rdquo;',
+	'create_schedule' => 'Create a new schedule',
+	'edit_schedule' => 'Editing &ldquo;%s&rdquo;',
+	'view_schedule' => 'Viewing &ldquo;Schedule ID: %s&rdquo;',
 
 	// form fields
 	'sender' => 'Sender',
-	'sender_explain' => 'Your broadcast sender.',
+	'sender_explain' => 'Your schedule sender.',
 	'sender_missing' => 'Please enter a sender',
 	'recipient_missing' => 'Please enter a recipient',
 	'message_missing' => 'Please enter a message',
@@ -20,7 +20,6 @@ return array(
 
 	// Schedule
 	'schedule' => 'Schedule',
-	'keyword' => 'Keyword',
 	'start_date' => 'Start',
 	'trigger' => 'Trigger',
 	'onetime' => 'Onetime',
@@ -58,21 +57,21 @@ return array(
 	'failed' => 'Failed',
 
 	'recipient' => 'Recipient',
-	'recipient_explain' => 'The recipient for your broadcast.',
+	'recipient_explain' => 'The recipient for your schedule.',
 
 	'fromfile' => 'Filename',
-	'fromfile_explain' => 'Or upload recipient for your broadcast. (.txt, .doc, .pdf, and .xls only)',
+	'fromfile_explain' => 'Or upload recipient for your schedule. (.txt, .doc, .pdf, and .xls only)',
 
 	'message' => 'Message',
-	'message_explain' => 'What your broadcast is about.',
+	'message_explain' => 'What your schedule is about.',
 
 	'description' => 'Description',
 	'description_explain' => '',
 
 	// messages
-	'created' => 'Your new broadcast has been added.',
-	'updated' => 'Your broadcast has been updated.',
-	'deleted' => 'Your broadcast has been deleted.',
-	'delete_error' => 'You must have at least one broadcast.',
+	'created' => 'Your new schedule has been added.',
+	'updated' => 'Your schedule has been updated.',
+	'deleted' => 'Your schedule has been deleted.',
+	'delete_error' => 'You must have at least one schedule.',
 
 );
