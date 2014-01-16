@@ -4,7 +4,7 @@
 						<em><?php echo __('global.make_broadcast_easier'); ?></em>
 					</footer>
 					<?php endif; ?>
-					</div>
+					<!-- div>
 					<div class="col-md-3">
 		        <ul class="list-unstyled">
 		          <li>GitHub<li>
@@ -37,7 +37,7 @@
 		          <li><a href="#">Product Markdown</a></li>          
 		        </ul>
 		      </div>  
-		    </div>
+		    </div -->
 	    </div>
     </div>
     <script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
