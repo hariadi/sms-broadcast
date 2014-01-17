@@ -7,6 +7,7 @@ return array(
 	'create_page' => 'Create a new page',
 	'nopages_desc' => 'You don’t have any pages.',
 	'redirect' => 'Redirect',
+	'editing_page' => 'Editing <em>%s&rsquo;s</em>',
 
 	// form fields
 	'redirect_url' => 'Redirect Url',

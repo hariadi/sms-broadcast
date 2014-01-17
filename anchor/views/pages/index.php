@@ -1,17 +1,13 @@
 <?php echo $header; ?>
 
-<hgroup class="wrap">
-	<h1><?php echo __('pages.pages'); ?></h1>
+<?php echo Html::link('admin/pages/add', __('pages.create_page'), array('class' => 'btn btn-lg btn-primary pull-right')); ?>
 
-	<?php if($pages->count): ?>
-	<nav>
-		<?php echo Html::link('admin/pages/add', __('pages.create_page'), array('class' => 'btn')); ?>
-	</nav>
-	<?php endif; ?>
-</hgroup>
+<h1 class="page-header"><?php echo __('pages.pages'); ?></h1>
 
-<section class="wrap">
-	<?php echo $messages; ?>
+<?php echo $messages; ?>
+
+<div class="row">
+	<div class="col col-lg-9">
 
 	<nav class="sidebar statuses">
 		<?php echo Html::link('admin/pages', '<span class="icon"></span> ' . __('global.all'), array(
@@ -25,26 +21,36 @@
 	</nav>
 
 	<?php if($pages->count): ?>
-	<ul class="main list">
-		<?php foreach($pages->results as $page): ?>
-		<li>
-			<a href="<?php echo Uri::to('admin/pages/edit/' . $page->id); ?>">
-				<strong><?php echo $page->name; ?></strong>
+	<div class="table-responsive">
 
-				<span>
-					<?php echo $page->slug; ?>
+		<table class="table table-hover">
+				<thead>
+					<tr>
+						<th>#</th>
+						<th>Title</th>
+						<th>Created</th>
+						<th>Status</th>
+					</tr>
+				</thead>
+				<tbody>
 
-					<em class="status <?php echo $page->status; ?>" title="<?php echo __('global.' . $page->status); ?>">
-						<?php echo __('global.' . $page->status); ?>
-					</em>
-				</span>
-			</a>
-		</li>
+		<?php foreach($pages->results as $key => $page): ?>
+		<tr class="status draft">
+			<td><?php echo $key+1; ?></td>
+			<td><a href="<?php echo Uri::to('admin/pages/edit/' . $page->id); ?>" title=""><?php echo $page->name; ?></a></td>
+			<td><?php echo Date::format($page->created); ?></td>
+			<td><span class="label label-<?php
+			$search  = array('published', 'draft', 'archived');
+			$replace = array('success', 'primary', 'info');
+			echo str_replace($search, $replace, $page->status); 
+			?>"><?php echo __('global.' . $page->status); ?></span></td>
+		</tr>
 		<?php endforeach; ?>
-	</ul>
+	</tbody>
+	</table>
+	</div>
 
-	<aside class="paging"><?php echo $pages->links(); ?></aside>
-
+	<ul class="pagination"><?php echo $pages->links(); ?></ul>
 	<?php else: ?>
 	<aside class="empty pages">
 		<span class="icon"></span>
@@ -52,6 +58,7 @@
 		<?php echo Html::link('admin/pages/add', __('pages.create_page'), array('class' => 'btn')); ?>
 	</aside>
 	<?php endif; ?>
-</section>
+</div>
+</div>
 
 <?php echo $footer; ?>
