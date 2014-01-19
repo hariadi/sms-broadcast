@@ -23,7 +23,7 @@
     </div>
 
     <div class="form-group<?php echo ($page->redirect) ? ' show' : ''; ?>">
-      <label class="col-lg-2 control-label" for="title"><?php echo __('pages.redirect'); ?></label>
+      <label class="col-lg-2 control-label" for="redirect"><?php echo __('pages.redirect'); ?></label>
       <div class="col-lg-10">
         <?php echo Form::text('redirect', Input::previous('redirect', $page->redirect), array(
 					'placeholder' => __('pages.redirect_url'),
