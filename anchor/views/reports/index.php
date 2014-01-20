@@ -47,7 +47,7 @@
           <!--td><a href="<?php echo Uri::to('admin/reports/view/')  . $report->id; ?>"><?php echo $report->id; ?></a></td-->
           <td><?php echo $report->id; ?></td>
           <td><?php echo $report->destination; ?></td>
-          <td><?php echo $report->messages; ?></td>
+          <td><?php echo $report->message; ?></td>
           <td><?php echo $report->charge; ?></td>
           <td><?php echo $report->type; ?></td>
           <td><?php echo Date::format($report->date, 'jS F Y h:i A'); ?></td>
