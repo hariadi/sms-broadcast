@@ -14,7 +14,7 @@
 
     <link rel="stylesheet" href="<?php echo asset('anchor/views/assets/css/custom.css'); ?>">
 
-    <?php if ( Uri::current() == 'admin/broadcasts/add') : ?>
+    <?php if ( Uri::current() == 'admin/broadcasts/add' or Uri::current() == 'admin/reports' ) : ?>
     <link rel="stylesheet" href="<?php echo asset('anchor/views/assets/css/bootstrap-datetimepicker.min.css'); ?>">
 		<?php endif; ?> 
 	</head>

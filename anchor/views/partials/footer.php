@@ -4,50 +4,17 @@
 						<em><?php echo __('global.make_broadcast_easier'); ?></em>
 					</footer>
 					<?php endif; ?>
-					<!-- div>
-					<div class="col-md-3">
-		        <ul class="list-unstyled">
-		          <li>GitHub<li>
-		          <li><a href="#">About us</a></li>
-		          <li><a href="#">Blog</a></li>
-		          <li><a href="#">Contact &amp; support</a></li>
-		        </ul>
-		      </div>
-		      <div class="col-md-3">
-		        <ul class="list-unstyled">
-		          <li>Product<li>
-		          <li><a href="#">SMS Broadcast</a></li>
-		          <li><a href="#">Email Broadcast</a></li>
-		          <li><a href="#">WhatApps Broadcast</a></li>          
-		        </ul>
-		      </div>
-		      <div class="col-md-3">
-		        <ul class="list-unstyled">
-		          <li>Services<li>
-		          <li><a href="#">Broadcast</a></li>
-		          <li><a href="#">Presentations</a></li>
-		          <li><a href="#">Code snippets</a></li>      
-		        </ul>
-		      </div>
-		      <div class="col-md-3">
-		        <ul class="list-unstyled">
-		          <li>Documentation<li>
-		          <li><a href="#">Help</a></li>
-		          <li><a href="#">Developer API</a></li>
-		          <li><a href="#">Product Markdown</a></li>          
-		        </ul>
-		      </div>  
-		    </div -->
 	    </div>
     </div>
     <script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
     <script src="<?php echo asset('anchor/views/assets/js/bootstrap.min.js')?>"></script>
-    <?php  $parts = pathinfo(Uri::current()); if ( Uri::current() == 'admin/broadcasts/add' or $parts['dirname'] == 'admin/schedules/edit') : ?>
+    <?php $parts = pathinfo(Uri::current()); if ( Uri::current() == 'admin/broadcasts/add' or $parts['dirname'] == 'admin/schedules/edit' or Uri::current() == 'admin/reports') : ?>
     <script src="<?php echo asset('anchor/views/assets/js/bootstrap-filestyle.min.js'); ?>"></script>
     <script src="<?php echo asset('anchor/views/assets/js/bootstrap-datetimepicker.min.js'); ?>"></script>
 		<script type="text/javascript">
 	    $('#start_date').datetimepicker({
-		    format: 'yyyy-mm-dd hh:ii'
+	    	<?php $format = (Uri::current() == 'admin/reports') ? 'yyyy-mm-dd' : 'yyyy-mm-dd hh:ii'; ?>
+		    format: '<?php echo $format; ?>'
 	    });
 		</script>
 		<?php endif; ?>
