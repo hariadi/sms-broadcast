@@ -192,9 +192,20 @@ class Isms
 	{
 		$url = self::HOST . self::REPORT;
 		$params = $this->_auth;
-		$params['date'] = $this->formatDate();
-		$curls = array('url' => $url, 'post' => $params);
+
+		if (!is_array($date)) {
+			$tmpdate = $date;
+			$date = array($this->formatDate($tmpdate));
+		}
+
+		foreach ($date as $dt) {
+			$params['date'] = $dt;
+			$curls[] = array('url' => $url, 'post' => $params);
+		}
+		
 		$result = $this->curl( $curls );
+		print_r($curls);
+		exit();
 		return $this->formatReport($result);
 	}
 
