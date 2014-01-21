@@ -4,6 +4,9 @@ Thumbs.db
 *.esproj
 *.log
 *.gz
+*.ini_
+error_log
+bak.*
 
 # env
 /anchor/config/dev
