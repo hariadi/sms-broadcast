@@ -39,7 +39,7 @@
 	        	
 	        	<?php 
 						$menu = array('dashboard', 'broadcasts', 'schedules', 'profiles');
-						$admin = array('posts', 'comments', 'pages', /*'menu',*/ 'categories', 'users', 'extend');
+						$admin = array('posts', 'comments', 'pages', /*'menu',*/ 'categories', 'users', 'reports', 'extend');
 						?>
 						<?php foreach($menu as $url): ?>
 						<li <?php if(strpos(Uri::current(), $url) !== false) echo 'class="active"'; ?>>

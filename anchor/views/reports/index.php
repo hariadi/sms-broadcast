@@ -1,21 +1,35 @@
 <?php echo $header; ?>
 
-<?php echo Html::link('admin/reports/sync', __('report.sync_report'), array('class' => 'btn btn-lg btn-primary pull-right')); ?>
+<?php echo Html::link('admin/reports/sync', __('reports.sync_report'), array('class' => 'btn btn-lg btn-primary pull-right')); ?>
 
 
-<h1 class="page-header"><?php echo __('report.report', 'Dashboard'); ?></h1>
+<h1 class="page-header"><?php echo __('reports.report', 'Dashboard'); ?></h1>
 
 <?php echo $messages; ?>
 
-<form method="post" action="<?php echo Uri::to('admin/report/update'); ?>" novalidate enctype="multipart/form-data" role="form">
+<form class="form-horizontal" method="post" action="<?php echo Uri::to('admin/report/update'); ?>" novalidate enctype="multipart/form-data" role="form">
 
   <div class="form-group">
-  <label class="sr-only" for="start_date"><?php echo __('broadcasts.start_date'); ?></label>
+  <label class="col-md-1 control-label" for="from_date"><?php echo __('reports.from_date'); ?></label>
 
-    <div class="input-group date col-sm-6">
-      <?php echo Form::text('start_date', Input::previous('start_date'), array(
+    <div class="input-group date col-sm-4">
+      <?php echo Form::text('from_date', Input::previous('from_date'), array(
       'class' => 'form-control',
-      'id' => 'start_date',
+      'id' => 'from_date',
+      )); ?>
+      <div class="input-group-btn">
+        <button class="btn btn-default" type="button"><span class="glyphicon glyphicon-calendar"></span></button>
+      </div>
+    </div>
+</div>
+
+<div class="form-group">
+  <label class="col-md-1 control-label" for="to_date"><?php echo __('reports.to_date'); ?></label>
+
+    <div class="input-group date col-sm-4">
+      <?php echo Form::text('to_date', Input::previous('to_date'), array(
+      'class' => 'form-control',
+      'id' => 'to_date',
       )); ?>
       <div class="input-group-btn">
         <button class="btn btn-default" type="button"><span class="glyphicon glyphicon-calendar"></span></button>
@@ -56,7 +70,7 @@
         <?php endforeach; ?>
         <?php else: ?>
         <tr>
-          <td colspan="7"><?php echo __('report.no_reports'); ?></td>
+          <td colspan="7"><?php echo __('reports.no_reports'); ?></td>
         </tr>
         <?php endif; ?>
         </tbody>

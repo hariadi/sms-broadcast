@@ -3,6 +3,9 @@
 return array(
 
 	'report' => 'Report',
+	'reports' => 'Reports',
+	'from_date' => 'From',
+	'to_date' => 'To',
 
 	// Credit
 	'credit' => 'Credit',

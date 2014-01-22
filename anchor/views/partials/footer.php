@@ -12,7 +12,7 @@
     <script src="<?php echo asset('anchor/views/assets/js/bootstrap-filestyle.min.js'); ?>"></script>
     <script src="<?php echo asset('anchor/views/assets/js/bootstrap-datetimepicker.min.js'); ?>"></script>
 		<script type="text/javascript">
-	    $('#start_date').datetimepicker({
+	    $('#start_date, #to_date, #from_date').datetimepicker({
 	    	<?php $format = (Uri::current() == 'admin/reports') ? 'yyyy-mm-dd' : 'yyyy-mm-dd hh:ii'; ?>
 		    format: '<?php echo $format; ?>'
 	    });
