@@ -30,6 +30,7 @@
 						'class' => 'form-control',
 						'id' => 'html'
 					)); ?>
+					<?php echo $editor; ?>
         </div>
       </div>
 
@@ -86,82 +87,47 @@
       </div>
 
       <div class="form-group">
-		    <div class="col-sm-offset-2 col-sm-10">
-		      <div class="checkbox">
-		        <label for="comments"><?php echo __('posts.allow_comments'); ?>
-		          <?php $checked = Input::previous('comments', $article->comments == 1) ? ' checked' : ''; ?>
-		          <?php echo Form::checkbox('comments', 1, $checked, array(
-								'id' => 'comments'
-							)); ?>
-		        </label>
-		      </div>
-		    </div>
-		  </div>
+        <label class="col-lg-2 control-label" for="css"><?php echo __('posts.custom_css'); ?></label>
+        <div class="col-lg-10">
+        	<?php echo Form::textarea('css', Input::previous('css', $article->css), array(
+						'placeholder' => __('posts.custom_css_explain'),
+						'rows' => 3,
+						'class' => 'form-control',
+						'id' => 'css'
+					)); ?>
+        </div>
+      </div>
 
-      <p>
-				<label><?php echo __('posts.allow_comments'); ?>:</label>
-				<?php echo Form::checkbox('comments', 1, Input::previous('comments', $article->comments) == 1); ?>
-				<em><?php echo __('posts.allow_comments_explain'); ?></em>
-			</p>
+      <div class="form-group">
+        <label class="col-lg-2 control-label" for="js"><?php echo __('posts.custom_js'); ?></label>
+        <div class="col-lg-10">
+        	<?php echo Form::textarea('js', Input::previous('js', $article->js), array(
+						'placeholder' => __('posts.custom_js_explain'),
+						'rows' => 3,
+						'class' => 'form-control',
+						'id' => 'js'
+					)); ?>
+        </div>
+      </div>
 
+      <?php foreach($fields as $field): ?>
+	     <div class="form-group">
+	      <label class="col-lg-2 control-label" for="extend_<?php echo $field->key; ?>"><?php echo $field->label; ?></label>
+	      <div class="col-lg-4">
+	        <?php echo Extend::html($field); ?>
+	      </div>
+	    </div>
+	    <?php endforeach; ?>
 
-		<div class="wrap">
+	    <div class="form-group">
+	      <div class="col-lg-10 col-lg-offset-2">
+	        <?php echo Form::button(__('global.save'), array('type' => 'submit', 'class' => 'btn btn-primary')); ?>
 
-			<?php echo Form::text('title', Input::previous('title', $article->title), array(
-				'placeholder' => __('posts.title'),
-				'autocomplete'=> 'off',
-				'autofocus' => 'true'
-			)); ?>
-
-			<aside class="buttons">
-				<?php echo Form::button(__('global.save'), array(
-					'type' => 'submit',
-					'class' => 'btn'
-				)); ?>
-
-				<?php echo Html::link('admin/posts/delete/' . $article->id, __('global.delete'), array(
-					'class' => 'btn delete red'
-				)); ?>
-			</aside>
-		</div>
+	        <?php echo Html::link('admin/posts/delete/' . $article->id, __('global.delete'), array('class' => 'btn btn-danger')); ?>
+	      </div>
+	    </div>
 	</fieldset>
-
-	<fieldset class="main">
-		<div class="wrap">
-			<?php echo Form::textarea('html', Input::previous('html', $article->html), array(
-				'placeholder' => __('posts.content_explain')
-			)); ?>
-
-			<?php echo $editor; ?>
-		</div>
-	</fieldset>
-
-	<fieldset class="meta split">
-		<div class="wrap">
-			
-			<p>
-				<label><?php echo __('posts.allow_comments'); ?>:</label>
-				<?php echo Form::checkbox('comments', 1, Input::previous('comments', $article->comments) == 1); ?>
-				<em><?php echo __('posts.allow_comments_explain'); ?></em>
-			</p>
-			<p>
-				<label><?php echo __('posts.custom_css'); ?>:</label>
-				<?php echo Form::textarea('css', Input::previous('css', $article->css)); ?>
-				<em><?php echo __('posts.custom_css_explain'); ?></em>
-			</p>
-			<p>
-				<label for="js"><?php echo __('posts.custom_js'); ?>:</label>
-				<?php echo Form::textarea('js', Input::previous('js', $article->js)); ?>
-				<em><?php echo __('posts.custom_js_explain'); ?></em>
-			</p>
-			<?php foreach($fields as $field): ?>
-			<p>
-				<label for="<?php echo $field->key; ?>"><?php echo $field->label; ?>:</label>
-				<?php echo Extend::html($field); ?>
-			</p>
-			<?php endforeach; ?>
-		</div>
-	</fieldset>
+	
 </form>
 
 <script src="<?php echo asset('anchor/views/assets/js/dragdrop.js'); ?>"></script>
