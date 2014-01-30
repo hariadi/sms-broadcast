@@ -9,7 +9,7 @@
 <div class="row">
   <div class="col-lg-12">
 
-  	<form class="form-horizontal" method="post" action="<?php echo Uri::to('admin/users/add'); ?>" novalidate  autocomplete="off">
+  	<form class="form-horizontal" method="post" action="<?php echo Uri::to('admin/users/add'); ?>" novalidate  autocomplete="off" enctype="multipart/form-data">
 
 		<input name="token" type="hidden" value="<?php echo $token; ?>">
 
