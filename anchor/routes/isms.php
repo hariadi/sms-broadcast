@@ -9,7 +9,7 @@ Route::collection(array('before' => 'auth,admin,csrf'), function() {
 
 		$vars['token'] = Csrf::token();
 		$vars['messages'] = Notify::read();
-		$vars['reports'] = Report::paginate($page, Config::get('meta.posts_per_page'));
+		$vars['reports'] = Isms::paginate($page, Config::get('meta.posts_per_page'));
 
 		return View::create('isms/index', $vars)
 			->partial('header', 'partials/header')
@@ -21,7 +21,7 @@ Route::collection(array('before' => 'auth,admin,csrf'), function() {
 	*/
 	Route::get(array('admin/isms/sync'), function($page = 1) {
 
-		$isms = Report::update();
+		$isms = Isms::update();
 		Notify::success(__('report.uptodate'));
 
 		return Response::redirect('admin/isms');
