@@ -25,6 +25,12 @@ return array(
 	'manage' => 'Manage',
 	'reset' => 'Reset',
 	'all' => 'All',
+	'sender' => 'Sender',
+
+	//export
+	'export_xls' => 'Excel',
+	'search' => 'Search',
+
 
 	// pagination
 	'next' => 'Next',

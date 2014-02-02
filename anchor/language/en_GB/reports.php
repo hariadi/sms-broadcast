@@ -15,4 +15,14 @@ return array(
 	'no_reports' => 'No reports',
 	'sync_report' => 'Sync reports',
 	'uptodate' => 'Report uptodate',
+	'sort' => 'Sort',
+
+	//
+	'type' => 'Type',
+	'month' => 'Monthy',
+	'week' => 'Weekly',
+	'day' => 'Daily',
+	'order' => 'Order By',
+	'asc' => 'Ascending',
+	'dsc' => 'Decending',
 );
