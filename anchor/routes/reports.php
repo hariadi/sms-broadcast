@@ -7,9 +7,10 @@ Route::collection(array('before' => 'auth,admin,csrf'), function() {
 	*/
 	Route::get(array('admin/reports', 'admin/reports/(:num)'), function($page = 1) {
 
-		$vars['token'] = Csrf::token();
 		$vars['messages'] = Notify::read();
-		$vars['reports'] = Report::paginate($page, Config::get('meta.posts_per_page'));
+		$vars['reports'] = Broadcast::paginate($page, Config::get('meta.posts_per_page'));
+		$vars['sorts'] = array('ID', 'Client', 'Message', 'Sender', 'Date', 'Status');
+		$vars['status'] = 'all';
 
 		return View::create('reports/index', $vars)
 			->partial('header', 'partials/header')

@@ -10,18 +10,18 @@
 <form class="form-horizontal" method="post" action="<?php echo Uri::to('admin/report/update'); ?>" novalidate enctype="multipart/form-data" role="form">
 
   <div class="form-group">
-  <label class="col-md-1 control-label" for="from_date"><?php echo __('reports.from_date'); ?></label>
+    <label class="col-md-1 control-label" for="from_date"><?php echo __('reports.from_date'); ?></label>
 
-    <div class="input-group date col-sm-4">
-      <?php echo Form::text('from_date', Input::previous('from_date'), array(
-      'class' => 'form-control',
-      'id' => 'from_date',
-      )); ?>
-      <div class="input-group-btn">
-        <button class="btn btn-default" type="button"><span class="glyphicon glyphicon-calendar"></span></button>
+      <div class="input-group date col-sm-4">
+        <?php echo Form::text('from_date', Input::previous('from_date'), array(
+        'class' => 'form-control',
+        'id' => 'from_date',
+        )); ?>
+        <div class="input-group-btn">
+          <button class="btn btn-default" type="button"><span class="glyphicon glyphicon-calendar"></span></button>
+        </div>
       </div>
-    </div>
-</div>
+  </div>
 
 <div class="form-group">
   <label class="col-md-1 control-label" for="to_date"><?php echo __('reports.to_date'); ?></label>
@@ -36,6 +36,17 @@
       </div>
     </div>
 </div>
+
+<div class="form-group">
+  <label class="col-lg-2 control-label" for="sort"><?php echo __('reports.sort'); ?></label>
+  <div class="col-lg-4">
+    <?php echo Form::select('sort', $sorts, Input::previous('sort'), array(
+      'class' => 'form-control ',
+      'id' => 'sort',
+    )); ?>
+  </div>
+</div>
+
   <?php echo Form::button(__('global.submit'), array('type' => 'submit', 'class' => 'btn btn-primary')); ?>
 </form>       
 
@@ -46,10 +57,9 @@
         <thead>
         <tr>
             <th>ID</th>
-            <th>Destination</th>
+            <th>Client</th>
             <th>Message</th>
-            <th>Charge</th>
-            <th>Type</th>
+            <th>Sender</th>
             <th>Date</th>
             <th>Status</th>
         </tr>
@@ -60,12 +70,15 @@
         <tr>
           <!--td><a href="<?php echo Uri::to('admin/reports/view/')  . $report->id; ?>"><?php echo $report->id; ?></a></td-->
           <td><?php echo $report->id; ?></td>
-          <td><?php echo $report->destination; ?></td>
+          <td><?php echo $report->client_name; ?></td>
           <td><?php echo $report->message; ?></td>
-          <td><?php echo $report->charge; ?></td>
-          <td><?php echo $report->type; ?></td>
+          <td><?php echo $report->sender; ?></td>
           <td><?php echo Date::format($report->date, 'jS F Y h:i A'); ?></td>
-          <td><?php echo $report->status; ?></td>
+          <td><span class="label label-<?php
+            $search  = array('success', 'pending', 'failed');
+            $replace = array('success', 'primary', 'warning');
+            echo str_replace($search, $replace, $report->status); 
+            ?>"><?php echo __('broadcasts.' . $report->status); ?></span></td>
         </tr>
         <?php endforeach; ?>
         <?php else: ?>
