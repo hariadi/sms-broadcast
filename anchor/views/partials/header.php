@@ -38,8 +38,8 @@
 	        <ul class="nav navbar-nav">
 	        	
 	        	<?php 
-						$menu = array('dashboard', 'broadcasts', 'schedules', 'profiles');
-						$admin = array(/*'posts', 'comments', 'pages', 'menu', 'categories', 'extend', */'users', 'reports');
+						$menu = array('dashboard', 'broadcasts', 'schedules', 'profiles', 'reports');
+						$admin = array(/*'posts', 'comments', 'pages', 'menu', 'categories', 'extend', */'users');
 						?>
 						<?php foreach($menu as $url): ?>
 						<li <?php if(strpos(Uri::current(), $url) !== false) echo 'class="active"'; ?>>
