@@ -70,9 +70,10 @@
 	        	<li><a href="<?php echo Uri::to('admin/logout'); ?>"><span class="glyphicon glyphicon-off"></span>
  <?php echo __('global.logout'); ?></a></li>
 	        	<?php else: ?>
+	        	<?php if ( Uri::current() != 'admin/login' ) : ?>
             <li>
-							<a href="<?php echo Uri::to('admin/users/login'); ?>"><?php echo __('global.login'); ?></a>
-						</li><?php endif; ?>
+							<a href="<?php echo Uri::to('admin/login'); ?>"><?php echo __('global.login'); ?></a>
+						</li><?php endif; ?><?php endif; ?>
           </ul>
 					
         </nav>

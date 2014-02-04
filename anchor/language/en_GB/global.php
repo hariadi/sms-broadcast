@@ -28,7 +28,7 @@ return array(
 	'sender' => 'Sender',
 
 	//export
-	'export_xls' => 'Excel',
+	'export_xls' => 'Export',
 	'search' => 'Search',
 
 
@@ -87,6 +87,8 @@ return array(
 	'profile_memory_usage' => 'Total memory usage',
 
 	// messages
+	'messages' => 'Messages',
+	'date' => 'Date',
 	'confirm_delete' => 'Are you sure you want to delete? This can’t be undone!'
 
 );

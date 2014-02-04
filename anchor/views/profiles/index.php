@@ -6,7 +6,7 @@
 
 <div class="row placeholder">
     <div class="col-md-2 placeholder">
-        <?php $img = ($fields) ? $fields[0]->value->filename: 'jobs-malaysia.png'; ?>
+        <?php $img = ($fields && isset($fields[0]->value->filename)) ? $fields[0]->value->filename : 'jobs-malaysia.png'; ?>
       <img src="<?php echo asset('content/avatar/' . $img); ?>" class="img-responsive" alt="Generic placeholder thumbnail">
       
     </div>

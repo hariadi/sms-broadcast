@@ -18,11 +18,12 @@ return array(
 	'sort' => 'Sort',
 
 	//
+	'client' => 'Client',
 	'type' => 'Type',
-	'month' => 'Monthy',
+	'month' => 'Monthly',
 	'week' => 'Weekly',
 	'day' => 'Daily',
 	'order' => 'Order By',
 	'asc' => 'Ascending',
-	'dsc' => 'Decending',
+	'desc' => 'Decending',
 );

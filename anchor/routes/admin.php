@@ -55,7 +55,7 @@ Route::post('admin/login', array('before' => 'csrf', 'main' => function() {
 	}
 
 	// check for updates
-	Balance::update();
+	//Balance::update();
 
 	// If admin login, notify about current balance
 	if (Auth::user()->role == 'administrator') {

@@ -11,16 +11,11 @@
       <fieldset>
         <legend>Broadcast Details</legend>
 
-        <div class="form-group">
-          <label class="col-lg-2 control-label" for="sender"><?php echo __('broadcasts.sender'); ?></label>
-          <div class="col-lg-10">
-            <?php echo Form::text('sender', Input::previous('sender'), array(
-							'placeholder' => '63663',
-							'class' => 'form-control',
-							'id' => 'sender',
-						)); ?>
-          </div>
-        </div>
+        <?php echo Form::hidden('sender', Input::previous('sender'), array(
+              'placeholder' => '63663',
+              'class' => 'form-control',
+              'id' => 'sender',
+            )); ?>
 
         <div class="form-group">
           <label class="col-lg-2 control-label" for="keyword"><?php echo __('broadcasts.keyword'); ?></label>
