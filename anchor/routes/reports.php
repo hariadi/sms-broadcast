@@ -52,61 +52,25 @@ Route::collection(array('before' => 'auth,admin,csrf'), function() {
 	/*
 		Search Date Range
 	*/
-	Route::get(array('admin/reports/search/daterange/(:any)/(:any)/(:any)/(:any)', 'admin/reports/search/daterange/(:any)/(:any)/(:any)/(:any)/(:num)'), function($from = null, $to = null, $sort = 'id', $order = 'desc', $page = 1) {
-
-		$vars['messages'] = Notify::read();
-		$vars['token'] = Csrf::token();
-		$from = Date::mysql($from);
-		$to = Date::mysql($to);
-		$filter = array(
-			'use' => 'daterange', 
-			'from' => $from, 
-			'to' => $to, 
-			'sort' => $sort, 
-			'order' => $order,
-			'type' => '', 
-		);
-		$vars['search'] = json_decode(json_encode($filter), FALSE);
-
-		$vars['reports'] = Broadcast::search($filter, $page+1, Config::get('meta.posts_per_page'), Uri::to('admin/reports/search/daterange/' . $from . '/' . $to . '/' . $sort . '/' . $order));
-		$vars['status'] = 'all';
-
-		$vars['sorts'] = array(
-			'client' => __('global.client'),
-			'messages' => __('global.messages'),
-			'sender' => __('global.sender'),
-			'created' => __('global.created'),
-			'status' => __('global.status'),
-		);
-
-		$vars['types'] = array(
-			'month' => __('reports.month'),
-			'week' => __('reports.week'),
-			'day' => __('reports.day')
-		);
-
-		$vars['orders'] = array(
-			'asc' => __('reports.asc'),
-			'desc' => __('reports.desc')
-		);
-
-		return View::create('reports/index', $vars)
-			->partial('header', 'partials/header')
-			->partial('footer', 'partials/footer');
-	});
-
 	Route::get(array(
-		'admin/reports/interval', 
-		'admin/reports/interval/(:any)',
-		'admin/reports/interval/(:any)/(:num)'),
-
-	function($interval = 'month', $page = 1) {
+		'admin/reports/search/(:any)/(:any)',
+		'admin/reports/search/(:any)/(:any)/(:num)'), 
+	function($from = null, $to = null, $page = 1) {
 
 		$vars['messages'] = Notify::read();
 		$vars['token'] = Csrf::token();
-		$filter = array('use' => 'interval', 'interval' => $interval);
-		$vars['reports'] = Broadcast::search($filter, $page, Config::get('meta.posts_per_page'), Uri::to('admin/reports'));
-		
+
+		$filter = array(
+			'from' => $from, 
+			'to' => $to,
+		);
+
+		$from = Date::format($from, 'Y-m-d');
+		$to = Date::format($to, 'Y-m-d');
+
+		$vars['reports'] = Broadcast::search($filter, $page+1, Config::get('meta.posts_per_page'), Uri::to('admin/reports/search/' . $from . '/' . $to));
+
+		$vars['search'] = json_decode(json_encode($filter), FALSE);
 		$vars['status'] = 'all';
 
 		$vars['sorts'] = array(
@@ -132,57 +96,111 @@ Route::collection(array('before' => 'auth,admin,csrf'), function() {
 			->partial('header', 'partials/header')
 			->partial('footer', 'partials/footer');
 	});
+	
 
 	Route::post(array('admin/reports/search', 'admin/reports/search/(:num)'), function($page = 1) {
-		$input = Input::get(array('use', 'interval', 'from_date', 'to_date', 'sort', 'order'));
+		$input = Input::get(array('from_date', 'to_date'));
+
+		if (empty($input['from_date'])) {
+			Notify::add('error', 'Please provide From Date');
+			return Response::redirect('admin/reports');
+		}
+
+		if (empty($input['from_date'])) {
+			Notify::add('error', 'Please provide To Date');
+			return Response::redirect('admin/reports');
+		}
+
 
 		if(!empty($input['from_date'])) {
-			$input['from_date'] = Date::mysql($input['from_date']);
+			$input['from_date'] = Date::format($input['from_date'], 'Y-m-d');
 		}
 
 		if(!empty($input['to_date'])) {
-			$input['to_date'] = Date::mysql($input['to_date']);
+			$input['to_date'] = Date::format($input['to_date'], 'Y-m-d');
 		}
 
-		if(empty($input['interval'])) {
-			$input['interval'] = 'month';
-		}
-
-		if(empty($input['sort'])) {
-			$input['sort'] = 'ID';
-		}
-
-		if(empty($input['order'])) {
-			$input['order'] = 'DESC';
-		}
-
-		if ($input['use'] == 'interval') {
-			
-			$uri = $input['use'] . '/' . $input['interval'] . '/' . $input['sort'] . '/' . $input['order'];
-		} elseif ($input['use'] == 'daterange') {
-
-			$uri = $input['use'] . '/' . $input['from_date'] . '/' . $input['to_date'] . '/' . $input['sort'] . '/' . $input['order'];
-
-		}
-
-		return Response::redirect('admin/reports/search/' . $uri  );
+		return Response::redirect('admin/reports/search/' . $input['from_date'] . '/' . $input['to_date']  );
 	});
 
-	Route::get('admin/reports/export/(:any)', function($type) {
+	/**
+	 * Export to Excel
+	 */
+	Route::get(array('admin/reports/(:any)', 'admin/reports/search/(:any)/(:any)/(:any)', 'admin/reports/search/(:any)/(:any)/(:num)/(:any)'), function($from = null, $to = null, $type = 'xls') {
 
-		return Response::redirect('admin/reports');
+		$search = true;
+
+		if (in_array($from, array('xls', 'pdf'))) {
+			$type = $from;
+			$search = false;
+		}
+
+		$query = Broadcast::sort('created', 'desc');
+		if (Auth::user()->role != 'administrator') {
+			$query = $query->where(Base::table('broadcasts.client'), '=', Auth::user()->id);
+		}
+
+		if ($search) {
+
+			$from = Date::format($from, 'Y-m-d') . '00:00:00';
+			$to = Date::format($to, 'Y-m-d') . '00:00:00';
+
+			$query = $query->where(Base::table('broadcasts.created'), '>=', $from)->where(Base::table('broadcasts.created'), '<=', $to);
+		}
+
+		$reports = $query->get();
+
+		require PATH . 'vendor/PHPExcel/PHPExcel' . EXT;
+
+		$excel = new PHPExcel();
+
+		// Set document properties
+		$excel->getProperties()->setCreator("Transrec")
+							 ->setLastModifiedBy("Transrec")
+							 ->setTitle("Broadcast Report")
+							 ->setSubject("Broadcast Report")
+							 ->setDescription("Broadcast Report");
+
+		$excel->setActiveSheetIndex(0)
+          ->setCellValue('A1', 'Client')
+          ->setCellValue('B1', 'Recipient')
+          ->setCellValue('C1', 'Created')
+          ->setCellValue('D1', 'Keyword')
+          ->setCellValue('E1', 'Message')
+          ->setCellValue('F1', 'Status');
+
+		foreach($reports as $key => $report) {
+			$cell = (String) $key+2;
+			//$recipients = implode(", ", Json::decode($report->recipient));
+			$excel->setActiveSheetIndex(0)
+            ->setCellValue('A' . $cell, $report->client)
+	          ->setCellValue('B' . $cell, $report->recipient)
+	          ->setCellValue('C' . $cell, $report->created)
+	          ->setCellValue('D' . $cell, $report->keyword)
+	          ->setCellValue('E' . $cell, $report->message)
+	          ->setCellValue('F' . $cell, $report->status);
+		}
+
+		// define report storage
+		$storage = PATH . 'content/report' . DS;
+		if(!is_dir($storage)) mkdir($storage);
+
+		// before save, delete old report
+		foreach (glob($storage . "*.{xls,xlsx,pdf}" ,GLOB_BRACE) as $file) {
+			if(is_file($file))
+		  unlink($file);
+		}
+
+		// report name
+		$filename = 'reports_' . date('Y-m-d') . '.xls';
+		$filepath = $storage . $filename;
+
+		// save to report storage
+		$objWriter = PHPExcel_IOFactory::createWriter($excel, 'Excel5');
+		$objWriter->save($filepath);
+
+		return Response::redirect('/content/report/' . $filename);
+
 	});
-
-	/*
-		Sync report with ISMS
-	*/
-	Route::get(array('admin/reports/sync'), function($page = 1) {
-
-		$reports = Report::update();
-		Notify::success(__('report.uptodate'));
-
-		return Response::redirect('admin/reports');
-	});
-
 
 });

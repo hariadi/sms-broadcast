@@ -4,84 +4,59 @@
 
 <?php echo $messages; ?>
 
+<?php //echo Uri::current(); ?>
+
+
 <form class="form-horizontal" method="post" action="<?php echo Uri::to('admin/reports/search'); ?>" novalidate enctype="multipart/form-data" role="form">
   <input name="token" type="hidden" value="<?php echo $token; ?>">
 
   <fieldset>
-    <legend>Search</legend>
 
     <div class="form-group">
-      <label class="col-md-2 control-label" for="type"><?php echo __('reports.type'); ?></label>
-      <div class="row">
-        <div class="col-lg-1">
-          <?php echo Form::radio('use', 'interval', Input::previous('use', $search->use == 'interval'), array(
-          'id' => 'interval',
-        )); ?>
-        </div>
-        <div class="col-lg-7">
-          <div class="input-group col-md-4">
-            <?php echo Form::select('type', $types, Input::previous('type', $search->type), array(
-            'class' => 'form-control ',
-            'id' => 'type',
-            'onclick' => 'document.getElementById(\'interval\').checked = true',
-            'onfocus' => 'document.getElementById(\'interval\').checked = true',
-            )); ?>
-          </div>
-        </div>
-     </div>
-   </div>
-   <div class="form-group"><label class="col-md-2 control-label" for="from_date"><?php echo __('reports.from_date'); ?></label>
-    <div class="row">
-       <div class="col-lg-1">
-        <?php echo Form::radio('use', 'daterange', Input::previous('use', $search->use == 'daterange'), array(
-          'id' => 'daterange',
-        )); ?>
-      </div>
 
-       <div class="col-lg-2">
+      <label class="col-md-2 control-label" for="from_date"><?php echo __('reports.from_date'); ?></label>
+
+      <div class="col-lg-4">
         <div class="input-group date">
           <?php echo Form::text('from_date', Input::previous('from_date', $search->from), array(
+            'placeholder' => 'yyyy-mm-dd',
             'class' => 'form-control',
             'id' => 'from_date',
-            'onclick' => 'document.getElementById(\'daterange\').checked = true',
-            'onfocus' => 'document.getElementById(\'daterange\').checked = true',
             )); ?>
           <div class="input-group-btn">
             <button class="btn btn-default" type="button"><span class="glyphicon glyphicon-calendar"></span></button>
           </div>
         </div>
       </div>
+    </div>
+
+    <div class="form-group">
 
       <label class="col-md-2 control-label" for="to_date"><?php echo __('reports.to_date'); ?></label>
-      
-      <div class="col-lg-2">
+
+      <div class="col-lg-4">
         <div class="input-group date">
           <?php echo Form::text('to_date', Input::previous('to_date', $search->to), array(
+            'placeholder' => 'yyyy-mm-dd',
             'class' => 'form-control',
             'id' => 'to_date',
-            'onclick' => 'document.getElementById(\'daterange\').checked = true',
-            'onfocus' => 'document.getElementById(\'daterange\').checked = true',
             )); ?>
-            <div class="input-group-btn">
-              <button class="btn btn-default" type="button"><span class="glyphicon glyphicon-calendar"></span></button>
-            </div>
+          <div class="input-group-btn">
+            <button class="btn btn-default" type="button"><span class="glyphicon glyphicon-calendar"></span></button>
           </div>
         </div>
-
       </div>
     </div>
 
+    <div class="form-group">
+      <div class="col-lg-10 col-lg-offset-2">
+        <?php echo Form::button(__('global.search'), array('type' => 'submit', 'class' => 'btn btn-primary')); ?>
 
-
-              <div class="form-group">
-                <div class="col-md-offset-2">
-                  <?php echo Form::button(__('global.search'), array('type' => 'submit', 'class' => 'btn btn-primary')); ?>
-
-                  <?php echo Html::link('admin/posts/export/xls', __('global.export_xls'), array('class' => 'btn btn-success')); ?>
-                </div>
-              </div>
-            </fieldset>
-          </form>       
+         <?php echo Html::link( Uri::current() . '/xls', __('global.export_xls'), array('class' => 'btn btn-success')); ?>
+      </div>
+    </div>
+  </fieldset>
+</form>       
 
 
           <h2 class="sub-header">Latest Activities</h2>
