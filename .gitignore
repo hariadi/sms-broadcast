@@ -36,3 +36,4 @@ bak.*
 
 # We all love Sublime Text and its awesome plugins, don't we?
 sftp-config.json
+vendor/*

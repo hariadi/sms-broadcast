@@ -18,7 +18,7 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 		$credit_use = Transaction::where('client', '=', $userid)->where('guid', '=', $uuid)->sum('credit');
 
 		$vars['credits'] = array(
-			'available' => $credit_avail,
+			'available' => $credit_avail ? $credit_avail : 0,
 			'used' => $credit_use,
 			'balance' => $credit_avail + $credit_use
 		);

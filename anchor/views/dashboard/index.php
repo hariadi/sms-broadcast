@@ -17,15 +17,15 @@
         <h3><?php echo __('dashboard.credit'); ?></h3>
         <ul class="list-group">
             <li class="list-group-item">
-            <span class="badge"><?php echo $credits['available']; ?></span>
+            <span class="badge"><?php echo abs($credits['available']); ?></span>
             <?php echo __('dashboard.available'); ?>
             </li>
             <li class="list-group-item">
-            <span class="badge"><?php echo $credits['used']; ?></span>
+            <span class="badge"><?php echo abs($credits['used']); ?></span>
             <?php echo __('dashboard.used'); ?>
             </li>
             <li class="list-group-item">
-            <span class="badge"><?php echo $credits['balance']; ?></span>
+            <span class="badge"><?php echo abs($credits['balance']); ?></span>
             <?php echo __('dashboard.total'); ?>
             </li>
         </ul>
