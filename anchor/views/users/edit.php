@@ -75,6 +75,22 @@
       </div>
 
       <div class="form-group">
+        <label class="col-md-2 control-label" for="expired"><?php echo __('users.credit_expired'); ?></label>
+
+        <div class="col-lg-4">
+          <div class="input-group date">
+            <?php echo Form::text('expired', Input::previous('expired', $user->expired), array(
+              'class' => 'form-control',
+              'id' => 'expired',
+              )); ?>
+            <div class="input-group-btn">
+              <button class="btn btn-default" type="button"><span class="glyphicon glyphicon-calendar"></span></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
 	      <div class="col-lg-10 col-lg-offset-2">
 	        <?php echo Form::button(__('global.update'), array('type' => 'submit', 'class' => 'btn btn-primary')); ?>
 

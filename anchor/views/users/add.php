@@ -70,6 +70,28 @@
 						<p class="help-block"><?php echo __('users.credit_explain'); ?></p>
 	        </div>
 	      </div>
+			<?php
+	      	$expired = new DateTime(Date::mysql('now'));;
+	      	$expired->modify('+3 month');
+	      	?>
+	      <div class="form-group">
+	      		
+
+		      <label class="col-md-2 control-label" for="expired"><?php echo __('users.credit_expired'); ?></label>
+
+		      <div class="col-lg-4">
+		        <div class="input-group date">
+		          <?php echo Form::text('expired', Input::previous('expired'), array(
+		            'value' => $expired->format('Y-m-d H:i:s'),
+		            'class' => 'form-control',
+		            'id' => 'expired',
+		            )); ?>
+		          <div class="input-group-btn">
+		            <button class="btn btn-default" type="button"><span class="glyphicon glyphicon-calendar"></span></button>
+		          </div>
+		        </div>
+		      </div>
+		    </div>
 
 	      <div class="form-group">
 		      <div class="col-lg-10 col-lg-offset-2">

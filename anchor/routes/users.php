@@ -28,6 +28,15 @@ Route::collection(array('before' => 'auth,admin,csrf'), function() {
 		$credit_avail = Credit::where('client', '=', $id)->where('uuid', '=', $uuid)->column(array('credit'));
 		$credit_use = Transaction::where('client', '=', $id)->where('guid', '=', $uuid)->sum('credit');
 
+		$expired = Credit::where('client', '=', $id)->where('uuid', '=', $uuid)->column(array('expired'));
+
+		if ($expired == '0000-00-00 00:00:00' || empty($expired)) {
+			$expired_date = new DateTime(Date::mysql('now'));;
+	      	$expired_date->modify('+3 month');
+	      	$expired = $expired_date->format('Y-m-d H:i:s');
+		}
+
+		$vars['user']->expired = $expired;
 
 		$vars['credit'] = array(
 			'available' => $credit_avail,
@@ -68,13 +77,16 @@ Route::collection(array('before' => 'auth,admin,csrf'), function() {
 		}
 
 		if($topup = Input::get('credit')) {
-
+			// Credit
 			$credit['client'] = $id;
 			$credit['uuid'] = UUID::v4();
-			$input['credit'] = $credit['uuid'];
 			$credit['created'] = $input['created'];
 			$credit['createdby'] = Auth::user()->id;
 			$credit['credit'] = (float) $topup + Input::get('current_credit');
+			$credit['expired'] = Input::get('expired');
+
+			// User
+			$input['credit'] = $credit['uuid'];
 			$credit_topup = true;
 
 		}
@@ -174,8 +186,24 @@ Route::collection(array('before' => 'auth,admin,csrf'), function() {
 
 	Route::post('admin/users/add', function() {
 		$input = Input::get(array('username', 'email', 'real_name', 'password', 'bio', 'status', 'role'));
+		$credit_topup = false;
 
 		$input['created'] = Date::mysql('now');
+
+		if($topup = Input::get('credit')) {
+
+			// Credit
+			$credit['uuid'] = UUID::v4();
+			$credit['created'] = $input['created'];
+			$credit['createdby'] = Auth::user()->id;
+			$credit['credit'] = (float) $topup + Input::get('current_credit');
+			$credit['expired'] = Input::get('expired');
+
+			// User
+			$input['credit'] = $credit['uuid'];
+
+			$credit_topup = true;
+		}
 
 		$validator = new Validator($input);
 
@@ -195,12 +223,17 @@ Route::collection(array('before' => 'auth,admin,csrf'), function() {
 
 			return Response::redirect('admin/users/add');
 		}
-
 		$input['password'] = Hash::make($input['password']);
 
 		$user = User::create($input);
 
 		Extend::process('user', $user->id);
+
+		if ($credit_topup) {
+			$credit['client'] = $user->id;
+			Credit::create($credit);
+			Notify::success(__('users.topup'));
+		}
 
 		Notify::success(__('users.created'));
 
