@@ -65,7 +65,6 @@ Route::collection(array('before' => 'auth,admin,csrf'), function() {
 	Route::post('admin/users/edit/(:num)', function($id) {
 		$input = Input::get(array('username', 'email', 'real_name', 'bio', 'status', 'role'));
 		$password_reset = false;
-		$credit_topup = false;
 
 		$input['created'] = Date::mysql('now');
 
@@ -75,21 +74,16 @@ Route::collection(array('before' => 'auth,admin,csrf'), function() {
 			$input['password'] = $password;
 			$password_reset = true;
 		}
+		// Credit
+		//$credit['client'] = $id;
+		$credit['uuid'] = UUID::v4();
+		$credit['created'] = $input['created'];
+		$credit['createdby'] = Auth::user()->id;
+		$credit['credit'] = (float) Input::get('credit') + Input::get('current_credit');
+		$credit['expired'] = Input::get('expired');
 
-		if($topup = Input::get('credit')) {
-			// Credit
-			$credit['client'] = $id;
-			$credit['uuid'] = UUID::v4();
-			$credit['created'] = $input['created'];
-			$credit['createdby'] = Auth::user()->id;
-			$credit['credit'] = (float) $topup + Input::get('current_credit');
-			$credit['expired'] = Input::get('expired');
-
-			// User
-			$input['credit'] = $credit['uuid'];
-			$credit_topup = true;
-
-		}
+		// User
+		$input['credit'] = $credit['uuid'];
 
 		$validator = new Validator($input);
 
@@ -124,35 +118,37 @@ Route::collection(array('before' => 'auth,admin,csrf'), function() {
 
 		Extend::process('user', $id);
 
-		if ($credit_topup) {
 
-			// update TransRec account but not when TranRec account get top-up
-			if ($id != 1) {
 
-				// get TransRec uuid
-				$uuid = User::where('id', '=', 1)->column(array('credit'));
+		// update TransRec account but not when TranRec account get top-up
+		if ($id != 1) {
 
-				// get TransRec balance
-				$master_credit = Credit::where('client', '=', 1)->where('uuid', '=', $uuid)->column(array('credit'));
+			// get TransRec uuid
+			$uuid = User::where('id', '=', 1)->column(array('credit'));
 
-				$transrec = array();
-				$transrec['client'] = 1;
-				$transrec['uuid'] = UUID::v4();
-				$transrec['createdby'] = Auth::user()->id;
-				$transrec['credit'] = (float) $master_credit - Input::get('credit');
-				$transrec['created'] = Date::mysql('now');
+			// get TransRec balance
+			$master_credit = Credit::where('client', '=', 1)->where('uuid', '=', $uuid)->column(array('credit'));
 
-				// update transrec balance
-				Credit::create($transrec);
+			$transrec = array();
+			$transrec['uuid'] = UUID::v4();
+			$transrec['createdby'] = Auth::user()->id;
+			$transrec['credit'] = (float) $master_credit - Input::get('credit');
+			$transrec['created'] = Date::mysql('now');
 
-				// update current uuid balance reference
-				Query::table(Base::table('users'))->where('id', '=', 1)->update(array('credit' => $transrec['uuid']));
+			// update transrec balance
+			//Credit::create($transrec);
+			Credit::update(1, $transrec);
 
-			}
+			// update current uuid balance reference
+			Query::table(Base::table('users'))->where('id', '=', 1)->update(array('credit' => $transrec['uuid']));
 
-			Credit::create($credit);
-			Notify::success(__('users.topup'));
 		}
+
+		//Credit::create($credit);
+		//Credit::create($credit);
+		Credit::update($id, $credit);
+		Notify::success(__('users.topup'));
+
 
 		Notify::success(__('users.updated'));
 
@@ -186,24 +182,19 @@ Route::collection(array('before' => 'auth,admin,csrf'), function() {
 
 	Route::post('admin/users/add', function() {
 		$input = Input::get(array('username', 'email', 'real_name', 'password', 'bio', 'status', 'role'));
-		$credit_topup = false;
 
 		$input['created'] = Date::mysql('now');
 
-		if($topup = Input::get('credit')) {
+		// Credit
+		$credit['uuid'] = UUID::v4();
+		$credit['created'] = $input['created'];
+		$credit['createdby'] = Auth::user()->id;
+		$credit['credit'] = (float) Input::get('credit') + Input::get('current_credit');
+		$credit['expired'] = Input::get('expired');
 
-			// Credit
-			$credit['uuid'] = UUID::v4();
-			$credit['created'] = $input['created'];
-			$credit['createdby'] = Auth::user()->id;
-			$credit['credit'] = (float) $topup + Input::get('current_credit');
-			$credit['expired'] = Input::get('expired');
+		// User
+		$input['credit'] = $credit['uuid'];
 
-			// User
-			$input['credit'] = $credit['uuid'];
-
-			$credit_topup = true;
-		}
 
 		$validator = new Validator($input);
 
@@ -229,11 +220,10 @@ Route::collection(array('before' => 'auth,admin,csrf'), function() {
 
 		Extend::process('user', $user->id);
 
-		if ($credit_topup) {
-			$credit['client'] = $user->id;
-			Credit::create($credit);
-			Notify::success(__('users.topup'));
-		}
+		$credit['client'] = $user->id;
+		Credit::create($credit);
+		Notify::success(__('users.topup'));
+
 
 		Notify::success(__('users.created'));
 

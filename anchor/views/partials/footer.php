@@ -84,7 +84,6 @@
 					dataType: 'json',
 					cache: false,
 					success: function(html){
-						/*html content response of city_list.xxx */
 						$("#current_credit").html(html[user]);
 					}
 				});
