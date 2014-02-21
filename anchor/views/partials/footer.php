@@ -62,19 +62,34 @@
 		    $('<?php echo $hide; ?>').hide();
 
 		    $('#schedule').change(function() {
-				    if($(this).val() == 'daily') {
-				    	$("#date, #description").show();
-				    	$('#weekly, #monthly, #days').hide();
-				    } else if($(this).val() == 'weekly') {
-				    	$("#weekly, #description").show();
-				    	$("#monthly, #days").hide();
-				    } else if($(this).val() == 'monthly') {
-				    	$("#weekly").hide();
-				    	$("#description, #monthly, #days").show();
-				    } else {
-				      $('#description, #date, #weekly, #monthly, #days').hide();
-				    }
+			    if($(this).val() == 'daily') {
+			    	$("#date, #description").show();
+			    	$('#weekly, #monthly, #days').hide();
+			    } else if($(this).val() == 'weekly') {
+			    	$("#weekly, #description").show();
+			    	$("#monthly, #days").hide();
+			    } else if($(this).val() == 'monthly') {
+			    	$("#weekly").hide();
+			    	$("#description, #monthly, #days").show();
+			    } else {
+			      $('#description, #date, #weekly, #monthly, #days').hide();
+			    }
+			});
+
+			$('#account').change(function() {
+				var user = $(this).val();
+				$.ajax({
+					type: "GET",
+					url: "/admin/broadcasts/credit/" + user,
+					dataType: 'json',
+					cache: false,
+					success: function(html){
+						/*html content response of city_list.xxx */
+						$("#current_credit").html(html[user]);
+					}
 				});
+			});
+
 		});
 
 	    $(function() {

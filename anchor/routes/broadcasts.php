@@ -74,6 +74,13 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 	Route::get('admin/broadcasts/add', function() {
 		$vars['messages'] = Notify::read();
 		$vars['token'] = Csrf::token();
+		$accounts = User::get(array('id', 'real_name'));
+		$vars['credit'] = Credit::where('client', '=', Auth::user()->id)->fetch();
+		$vars['account'] = array();
+		
+		foreach ($accounts as $account) {
+			$vars['account'][$account->id] = $account->real_name;
+		}
 
 		$vars['schedules'] = array(
 			'onetime' => __('broadcasts.onetime'),
@@ -89,8 +96,8 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 
 	Route::post('admin/broadcasts/add', function() {
 
-		$input = Input::get(array('sender', 'recipient', 'fromfile', 'message'));
-		$transaction = array();
+		$input = Input::get(array('account', 'sender', 'recipient', 'fromfile', 'message'));
+		//$transaction = array();
 		$recipients = array();
 		$schedules = array();
 		$input['fromfile'] = $_FILES['fromfile'];
@@ -193,7 +200,7 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 
 		//recipients = array_merge($input['recipient'], normalize_number($data));
 		$recipients = $input['recipient'];
-	  $input['recipient'] = Json::encode($recipients);
+	  	$input['recipient'] = Json::encode($recipients);
 
 		$fromfile = $input['fromfile'];
 		unset($input['fromfile']);
@@ -231,13 +238,14 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 
 		if ($broadcasts) {
 
-			$transaction['client'] = $user->id;
-			$transaction['guid'] = User::where('id', '=', $user->id)->column(array('credit'));
-			$transaction['quantity'] = count($recipients, COUNT_RECURSIVE);
-			$transaction['credit'] = (float) -abs(Config::meta('credit_per_sms') * $transaction['quantity']);
-			$transaction['created'] = $input['created'];
+			//$transaction['client'] = $user->id;
+			//$transaction['account'] = $input['account'];
+			//$transaction['guid'] = User::where('id', '=', $user->id)->column(array('credit'));
+			$input['quantity'] = count($recipients, COUNT_RECURSIVE);
+			$input['credit'] = (float) -abs(Config::meta('credit_per_sms') * $input['quantity']);
+			//$transaction['created'] = $input['created'];
 
-			Transaction::create($transaction);
+			//Transaction::create($transaction);
 
 			$sms = new Isms(Config::meta('isms_username'), Config::meta('isms_password'));
 			$sms->setMessage($input['message']);
@@ -281,6 +289,15 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 		$redirect = ($broadcasts_schedule) ? 'admin/schedules' : 'admin/broadcasts';
 
 		return Response::redirect($redirect);
+	});
+
+	Route::get('admin/broadcasts/credit/(:num)', function($id) {
+		$credit = Credit::where('client', '=', $id)->fetch(array('credit'));
+		$json = Json::encode(array(
+			$id => $credit->credit
+		));
+
+		return Response::create($json, 200, array('content-type' => 'application/json'));
 	});
 
 
