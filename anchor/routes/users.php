@@ -25,10 +25,10 @@ Route::collection(array('before' => 'auth,admin,csrf'), function() {
 
 		$uuid = $vars['user']->credit;
 
-		$credit_avail = Credit::where('client', '=', $id)->where('uuid', '=', $uuid)->column(array('credit'));
-		$credit_use = Transaction::where('client', '=', $id)->where('guid', '=', $uuid)->sum('credit');
+		$credit_avail = Credit::where('client', '=', $id)->column(array('credit'));
+		$credit_use = Broadcast::where('client', '=', $id)->sum('credit');
 
-		$expired = Credit::where('client', '=', $id)->where('uuid', '=', $uuid)->column(array('expired'));
+		$expired = Credit::where('client', '=', $id)->column(array('expired'));
 
 		if ($expired == '0000-00-00 00:00:00' || empty($expired)) {
 			$expired_date = new DateTime(Date::mysql('now'));;
@@ -44,6 +44,7 @@ Route::collection(array('before' => 'auth,admin,csrf'), function() {
 			'balance' => (int) $credit_avail + $credit_use
 		);
 		
+		
 		$vars['fields'] = Extend::fields('user', $id);
 
 		$vars['statuses'] = array(
@@ -56,6 +57,7 @@ Route::collection(array('before' => 'auth,admin,csrf'), function() {
 			'editor' => __('global.editor'),
 			'client' => __('global.client')
 		);
+		print_r($vars);
 		
 		return View::create('users/edit', $vars)
 			->partial('header', 'partials/header')
@@ -147,7 +149,7 @@ Route::collection(array('before' => 'auth,admin,csrf'), function() {
 		//Credit::create($credit);
 		//Credit::create($credit);
 		Credit::update($id, $credit);
-		Notify::success(__('users.topup'));
+		//Notify::success(__('users.topup'));
 
 
 		Notify::success(__('users.updated'));
@@ -222,7 +224,7 @@ Route::collection(array('before' => 'auth,admin,csrf'), function() {
 
 		$credit['client'] = $user->id;
 		Credit::create($credit);
-		Notify::success(__('users.topup'));
+		//Notify::success(__('users.topup'));
 
 
 		Notify::success(__('users.created'));
