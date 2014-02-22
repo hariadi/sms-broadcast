@@ -242,7 +242,7 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 			//$transaction['account'] = $input['account'];
 			//$transaction['guid'] = User::where('id', '=', $user->id)->column(array('credit'));
 			$input['quantity'] = count($recipients, COUNT_RECURSIVE);
-			$input['credit'] = (float) -abs(Config::meta('credit_per_sms') * $input['quantity']);
+			$input['credit'] = (float) abs(Config::meta('credit_per_sms') * $input['quantity']);
 			//$transaction['created'] = $input['created'];
 
 			//Transaction::create($transaction);
@@ -292,7 +292,7 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 	});
 
 	Route::get('admin/broadcasts/credit/(:num)', function($id) {
-		$credit = Credit::where('client', '=', $id)->fetch(array('credit'));
+		$credit = User::where('id', '=', $id)->fetch(array('credit'));
 		$json = Json::encode(array(
 			$id => $credit->credit
 		));
