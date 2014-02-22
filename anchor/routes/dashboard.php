@@ -10,7 +10,7 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 		$id = Auth::user()->id;
 		$vars['messages'] = Notify::read();
 		$vars['client'] = Dashboard::view($id);
-		$vars['transactions'] = Transaction::paginate($page, Config::get('meta.posts_per_page'));
+		$vars['broadcasts'] = Broadcast::paginate($page, Config::get('meta.posts_per_page'));
 
 		$uuid = $vars['client']->credit;
 
@@ -19,8 +19,7 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 
 		$vars['credits'] = array(
 			'available' => $credit_avail ? $credit_avail : 0,
-			'used' => $credit_use,
-			'balance' => $credit_avail + $credit_use
+			'used' => $credit_use
 		);
 		
 		$vars['fields'] = Extend::fields('user', Auth::user()->id);

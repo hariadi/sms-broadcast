@@ -29,10 +29,6 @@
                 <span class="badge"><?php echo abs($credits['used']); ?></span>
                 <?php echo __('dashboard.used'); ?>
                 </li>
-                <li class="list-group-item">
-                <span class="badge"><?php echo abs($credits['balance']); ?></span>
-                <?php echo __('dashboard.total'); ?>
-                </li>
             </ul>
         </div>
        
@@ -51,8 +47,8 @@
         </tr>
         </thead>
         <tbody>
-        <?php if($transactions->count): ?>
-        <?php foreach($transactions->results as $transaction): ?>
+        <?php if($broadcasts->count): ?>
+        <?php foreach($broadcasts->results as $transaction): ?>
         <tr>
           <!--td><a href="<?php echo Uri::to('admin/broadcasts/view/')  . $transaction->id; ?>"><?php echo $transaction->id; ?></a></td-->
           <td><?php echo $transaction->id; ?></td>
@@ -63,15 +59,15 @@
         <?php endforeach; ?>
         <?php else: ?>
         <tr>
-          <td colspan="5"><?php echo __('dashboard.no_transactions'); ?></td>
+          <td colspan="5"><?php echo __('dashboard.no_broadcasts'); ?></td>
         </tr>
         <?php endif; ?>
         </tbody>
     </table>
 
-    <?php if ($transactions->links()) : ?>
+    <?php if ($broadcasts->links()) : ?>
         <ul class="pagination">
-            <?php echo $transactions->links(); ?>
+            <?php echo $broadcasts->links(); ?>
         </ul>
         <?php endif; ?>
 
