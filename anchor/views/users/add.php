@@ -64,6 +64,7 @@
 	        <label class="col-lg-2 control-label" for="credit"><?php echo __('users.credit'); ?></label>
 	        <div class="col-lg-5">
 	          <?php echo Form::text('credit', Input::previous('credit'), array(
+	          				'value' => 0,
 							'class' => 'form-control',
 							'id' => 'credit',
 						)); ?>

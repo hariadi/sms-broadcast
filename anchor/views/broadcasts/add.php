@@ -18,6 +18,19 @@
             )); ?>
 
         <div class="form-group">
+          <label class="col-lg-2 control-label" for="account"><?php echo __('broadcasts.account'); ?></label>
+          <div class="col-lg-4">
+            <?php echo Form::select('account', $account, Auth::user()->id, array(
+              'class' => 'form-control ',
+              'id' => 'account',
+            )); ?>
+          </div>
+          <p><?php echo __('broadcasts.current_credit'); ?>: 
+            <strong><code id="current_credit"><?php echo $credit->credit; ?></code></strong>
+          </p>
+        </div>
+
+        <div class="form-group">
           <label class="col-lg-2 control-label" for="keyword"><?php echo __('broadcasts.keyword'); ?></label>
           <div class="col-lg-10">
             <?php echo Form::text('keyword', Input::previous('keyword'), array(
@@ -147,10 +160,20 @@
             <?php endfor; ?>
           </div>
         </div>
+        <?php 
+        $submit = array(
+          'type' => 'submit', 
+          'class' => 'btn btn-primary'
+        );
+
+        //if ( $credit->credit <= 0 ) {
+        //  $submit['disabled'] = 'disabled';
+        //}
+        ?>
         
         <div class="form-group">
           <div class="col-lg-10 col-lg-offset-2">
-            <?php echo Form::button(__('global.broadcast'), array('type' => 'submit', 'class' => 'btn btn-primary')); ?>
+            <?php echo Form::button(__('global.broadcast'), $submit); ?>
           </div>
         </div>
       </fieldset>

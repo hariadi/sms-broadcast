@@ -58,7 +58,7 @@
         </div>
       </div>
 
-      <input name="current_credit" type="hidden" value="<?php echo $credit['balance']; ?>">
+      <input name="current_credit" type="hidden" value="<?php echo $credit['available']; ?>">
 
       <div class="form-group">
         <label class="col-lg-2 control-label" for="credit"><?php echo __('users.credit'); ?></label>
@@ -70,7 +70,7 @@
 					<p class="help-block"><?php echo __('users.credit_explain'); ?></p>
         </div>
         <div class="col-lg-4">
-        <p><?php echo __('users.current_credit', $credit['balance']); ?></p>
+        <p><?php echo __('users.current_credit', $credit['available']); ?></p>
         </div>
       </div>
 

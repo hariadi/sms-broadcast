@@ -7,22 +7,23 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 	*/
 	Route::get(array('admin/dashboard', 'admin/dashboard/(:num)'), function($page = 1) {
 		
-		$userid = Auth::user()->id;
+		$id = Auth::user()->id;
 		$vars['messages'] = Notify::read();
-		$vars['client'] = Dashboard::view($userid);
-		$vars['transactions'] = Transaction::paginate($page, Config::get('meta.posts_per_page'));
+		$vars['client'] = Dashboard::view($id);
+		$vars['broadcasts'] = Broadcast::paginate($page, Config::get('meta.posts_per_page'));
+		$vars['topups'] = Topup::paginate($page, Config::get('meta.posts_per_page'));
 
 		$uuid = $vars['client']->credit;
 
-		$credit_avail = Credit::where('client', '=', $userid)->where('uuid', '=', $uuid)->column(array('credit'));
-		$credit_use = Transaction::where('client', '=', $userid)->where('guid', '=', $uuid)->sum('credit');
+		$credit_avail = User::where('id', '=', $id)->column(array('credit'));
+		$credit_use = Broadcast::where('client', '=', $id)->sum('credit');
 
 		$vars['credits'] = array(
 			'available' => $credit_avail ? $credit_avail : 0,
-			'used' => $credit_use,
-			'balance' => $credit_avail + $credit_use
+			'used' => $credit_use
 		);
 		
+		$vars['fields'] = Extend::fields('user', Auth::user()->id);
 
 		$vars['statuses'] = array(
 			'inactive' => __('global.inactive'),
