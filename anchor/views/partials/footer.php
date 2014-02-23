@@ -89,6 +89,26 @@
 				});
 			});
 
+			$('#modalConfirmDelete').on('show', function() {
+			    var url = $(this).data('url'),
+			        removeBtn = $(this).find('.danger');
+			    removeBtn.attr('href', url);
+			});
+
+			$('.confirm-delete').on('click', function(e) {
+			    e.preventDefault();
+
+			    var url = $(this).attr('href');
+			    $('#modalConfirmDelete').data('url', url).modal('show');
+			});
+
+			$('#btnYes').click(function() {
+			  	var url = $('#modalConfirmDelete').data('url');
+			  	console.log(url);
+			  	$(this).attr('href', url);
+			  	$('#modalConfirmDelete').modal('hide');
+			});
+
 		});
 
 	    $(function() {
@@ -111,18 +131,26 @@
 
 				});
 
-
-
-				/*/select.change(function() {
-				    if($(this).val() == 'image') {
-				        $('label[for=indOther], #indOther').show();
-				    } else {
-				        $('label[for=indOther], #indOther').hide();
-				    }
-				});*/
-
 			});
 		</script>
-		<?php //endif; ?> 
+		<?php //endif; ?>
+		<!-- Modal -->
+		<div class="modal fade" id="modalConfirmDelete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		  <div class="modal-dialog modal-sm">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		        <h4 class="modal-title" id="myModalLabel">Delete</h4>
+		      </div>
+		      <div class="modal-body">
+		       <p>You are about to delete, this procedure is irreversible. Do you want to proceed?</p>
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+		        <a class="btn btn-danger" id="btnYes" href="#">Delete</a>
+		      </div>
+		    </div>
+		  </div>
+		</div>
 	</body>
 </html>
