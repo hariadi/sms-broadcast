@@ -75,7 +75,7 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 		$vars['messages'] = Notify::read();
 		$vars['token'] = Csrf::token();
 		$accounts = User::get(array('id', 'real_name'));
-		$vars['credit'] = Credit::where('client', '=', Auth::user()->id)->fetch();
+		$vars['credit'] = User::where('id', '=', Auth::user()->id)->fetch();
 		$vars['account'] = array();
 		
 		foreach ($accounts as $account) {
@@ -96,13 +96,15 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 
 	Route::post('admin/broadcasts/add', function() {
 
-		$input = Input::get(array('account', 'sender', 'recipient', 'fromfile', 'message'));
+		$input = Input::get(array('account', 'sender', 'recipient', 'fromfile', 'message', 'keyword'));
 		//$transaction = array();
 		$recipients = array();
 		$schedules = array();
 		$input['fromfile'] = $_FILES['fromfile'];
 		$broadcasts = false;
 		$broadcasts_schedule = false;
+
+		$input['topup'] = Topup::where('client', '=', Auth::user()->id)->sort('created', 'desc')->take(1)->column(array('id'));
 
 		if($schedule = Input::get('schedule') and $schedule != 'onetime') {
 			$schedules['schedule'] = $schedule;
@@ -238,23 +240,18 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 
 		if ($broadcasts) {
 
-			//$transaction['client'] = $user->id;
-			//$transaction['account'] = $input['account'];
-			//$transaction['guid'] = User::where('id', '=', $user->id)->column(array('credit'));
 			$input['quantity'] = count($recipients, COUNT_RECURSIVE);
 			$input['credit'] = (float) abs(Config::meta('credit_per_sms') * $input['quantity']);
-			//$transaction['created'] = $input['created'];
-
-			//Transaction::create($transaction);
 
 			$sms = new Isms(Config::meta('isms_username'), Config::meta('isms_password'));
 			$sms->setMessage($input['message']);
 			$sms->setNumber($recipients);
 
-			if($keyword = Input::get('keyword')) {
-				$input['keyword'] = $keyword;
-				$sms->setKeyword($keyword);
+			if (empty($input['keyword'])) {
+				$input['keyword'] = 'JOBSMY';
 			}
+
+			$sms->setKeyword($input['keyword']);
 
 			if ($broadcasts_schedule) {
 
