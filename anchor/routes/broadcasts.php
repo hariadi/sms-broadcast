@@ -95,7 +95,8 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 	});
 
 	Route::post('admin/broadcasts/add', function() {
-
+		$self = Auth::user();
+		// latest topup id from current user
 		$input = Input::get(array('account', 'sender', 'recipient', 'fromfile', 'message', 'keyword'));
 		//$transaction = array();
 		$recipients = array();
@@ -104,7 +105,9 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 		$broadcasts = false;
 		$broadcasts_schedule = false;
 
-		$input['topup'] = Topup::where('client', '=', Auth::user()->id)->sort('created', 'desc')->take(1)->column(array('id'));
+		$credit = User::where('id', '=', $self->id)->fetch(array('credit'));
+
+		$input['topup'] = Topup::where('client', '=', $self->id)->sort('created', 'desc')->take(1)->column(array('id'));
 
 		if($schedule = Input::get('schedule') and $schedule != 'onetime') {
 			$schedules['schedule'] = $schedule;
@@ -233,8 +236,7 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 			return Response::redirect('admin/broadcasts/add');
 		}
 
-		$user = Auth::user();
-		$input['client'] = $user->id;
+		$input['client'] = $self->id;
 		$input['status'] = 'success';
 		$input['created'] = Date::mysql('now');
 
@@ -243,6 +245,12 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 			$input['quantity'] = count($recipients, COUNT_RECURSIVE);
 			$input['credit'] = (float) abs(Config::meta('credit_per_sms') * $input['quantity']);
 
+			// Update whos account use to broadcast
+			$user = array();
+			$user['credit'] = $credit->credit - $input['credit'];
+			User::update($input['account'], $user);
+
+			// Setup iSMS API
 			$sms = new Isms(Config::meta('isms_username'), Config::meta('isms_password'));
 			$sms->setMessage($input['message']);
 			$sms->setNumber($recipients);
