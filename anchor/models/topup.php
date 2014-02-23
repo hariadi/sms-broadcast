@@ -10,6 +10,9 @@ class Topup extends Base {
 		$query = static::left_join(Base::table('users'), Base::table('users.id'), '=', Base::table('topups.client'));
 
 		//$query->where(Base::table('users.credit'), '=', Base::table('topups.uuid'));
+		if ($id = Auth::user()->id) {
+			$query = $query->where(Base::table('topups.client'), '=', $id);
+		}
 
 		$count = $query->count();
 
