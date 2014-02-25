@@ -81,6 +81,10 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 		foreach ($accounts as $account) {
 			$vars['account'][$account->id] = $account->real_name;
 		}
+		// if role not admin, remove master account from use list
+		if (Auth::user()->role != 'administrator') {
+			unset($vars['account'][1]);
+		}
 
 		$vars['schedules'] = array(
 			'onetime' => __('broadcasts.onetime'),
