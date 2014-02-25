@@ -10,5 +10,6 @@ return array(
 	'used' => 'Used',
 	'total' => 'Total',
 	'no_transactions' => 'No transactions',
+	'isms_balance' => 'ISMS Balance',
 
 );

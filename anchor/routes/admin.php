@@ -54,9 +54,6 @@ Route::post('admin/login', array('before' => 'csrf', 'main' => function() {
 		return Response::redirect('admin/login');
 	}
 
-	// check for updates
-	Balance::update();
-
 	// If admin login, notify about current balance
 	if (Auth::user()->role == 'administrator') {
 		$balance = (float) Config::meta('update_balance');
@@ -70,6 +67,21 @@ Route::post('admin/login', array('before' => 'csrf', 'main' => function() {
 
 	return Response::redirect('admin/dashboard');
 }));
+
+/*
+	ISMS Balance update
+*/
+Route::get('admin/isms/update/balance', function() {
+
+	Balance::update();
+	$balance = Config::meta('update_balance');
+
+	$json = Json::encode(array(
+		'balance' => $balance
+	));
+
+	return Response::create($json, 200, array('content-type' => 'application/json'));
+});
 
 /*
 	Log out

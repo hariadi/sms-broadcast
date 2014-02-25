@@ -22,6 +22,10 @@
       <!-- List group -->
       <ul class="list-group">
         <li class="list-group-item">
+          <span class="badge" id="ismsUpdate"><?php echo abs($ismsbalance); ?></span>
+          <?php echo __('dashboard.isms_balance'); ?>  <a href="#" id="ismsBalance"><i class="glyphicon glyphicon-refresh"></i> &nbsp;</a>
+        </li>
+        <li class="list-group-item">
           <span class="badge"><?php echo abs($credits['available']); ?></span>
           <?php echo __('dashboard.available'); ?>
         </li>
