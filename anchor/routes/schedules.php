@@ -221,4 +221,44 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 			->partial('footer', 'partials/footer');
 	});
 
+
+	/*
+		Delete schedule
+	*/
+	Route::get('admin/schedules/delete/(:num)', function($id) {
+
+		$url = 'https://isms.com.my/isms_balance.php?un=' . Config::meta('isms_username') . '&pwd=' . Config::meta('isms_password') . '&scid=' . $id
+			 . '&action=delete';
+
+		if(in_array(ini_get('allow_url_fopen'), array('true', '1', 'On'))) {
+			try {
+				$context = stream_context_create(array('http' => array('timeout' => 2)));
+				$result = file_get_contents($url, false, $context);
+			} catch(Exception $e) {
+				$result = false;
+			}
+		}
+		else if(function_exists('curl_init')) {
+			$session = curl_init();
+
+			curl_setopt_array($session, array(
+				CURLOPT_URL => $url,
+				CURLOPT_HEADER => false,
+				CURLOPT_RETURNTRANSFER => true
+			));
+
+			$result = curl_exec($session);
+
+			curl_close($session);
+		}
+		else {
+			$result = false;
+		}
+
+		Schedule::find($id)->delete();
+		Notify::success(__('schedules.deleted'));
+
+		return Response::redirect('admin/schedules');
+	});
+
 });

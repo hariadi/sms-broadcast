@@ -94,7 +94,11 @@
 	      <div class="col-lg-10 col-lg-offset-2">
 	        <?php echo Form::button(__('global.update'), array('type' => 'submit', 'class' => 'btn btn-primary')); ?>
 
-	        <?php echo Html::link('admin/users/delete/' . $user->id, __('global.delete'), array('class' => 'btn btn-danger')); ?>
+	        <?php echo Html::link('admin/users/delete/' . $user->id, __('global.delete'), array(
+            'class' => 'btn btn-danger confirm-delete',
+            'data-id' => $user->id,
+          )); ?>
+</button>
 	      </div>
 	    </div>
 
