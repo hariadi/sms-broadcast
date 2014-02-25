@@ -41,7 +41,7 @@
 	      <div class="form-group">
 	        <label class="col-lg-2 control-label" for="status"><?php echo __('users.status'); ?></label>
 	        <div class="col-lg-4">
-	          <?php echo Form::select('status', $statuses, Input::previous('status'), array(
+	          <?php echo Form::select('status', $statuses, Input::previous('status', 'active'), array(
 							'class' => 'form-control ',
 							'id' => 'status',
 						)); ?>
@@ -52,7 +52,7 @@
 	      <div class="form-group">
 	        <label class="col-lg-2 control-label" for="role"><?php echo __('users.role'); ?></label>
 	        <div class="col-lg-4">
-	          <?php echo Form::select('role', $roles, Input::previous('role'), array(
+	          <?php echo Form::select('role', $roles, Input::previous('role', 'client'), array(
 							'class' => 'form-control ',
 							'id' => 'role',
 						)); ?>

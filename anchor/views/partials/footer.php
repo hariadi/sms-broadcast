@@ -109,6 +109,18 @@
 			  	$('#modalConfirmDelete').modal('hide');
 			});
 
+			$('#ismsBalance').click(function() {
+			  	$.ajax({
+					type: "GET",
+					url: "/admin/isms/update/balance",
+					dataType: 'json',
+					cache: false,
+					success: function(html){
+						$("#ismsUpdate").hide().html(parseInt(html['balance'])).fadeIn();
+					}
+				});
+			});
+
 		});
 
 	    $(function() {

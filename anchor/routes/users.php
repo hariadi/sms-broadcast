@@ -134,10 +134,7 @@ Route::collection(array('before' => 'auth,admin,csrf'), function() {
 			$transrec = array();
 			$transrec['credit'] = (float) $master_credit - Input::get('credit');
 
-			// update transrec balance
-			//Credit::create($transrec);
 			User::update(1, $transrec);
-
 		}
 
 		Notify::success(__('users.updated'));
@@ -218,6 +215,16 @@ Route::collection(array('before' => 'auth,admin,csrf'), function() {
 			Notify::success(__('users.topup'));
 		}
 
+		if ($user->id != 1) {
+			// get TransRec balance
+			$master_credit = User::where('id', '=', 1)->column(array('credit'));
+
+			$transrec = array();
+			$transrec['credit'] = (float) $master_credit - $input['credit'];
+
+			User::update(1, $transrec);
+		}
+
 		return Response::redirect('admin/users');
 	});
 
@@ -232,6 +239,16 @@ Route::collection(array('before' => 'auth,admin,csrf'), function() {
 
 			return Response::redirect('admin/users/edit/' . $id);
 		}
+
+		// get TransRec balance
+		$master_credit = User::where('id', '=', 1)->column(array('credit'));
+
+		// get user credit
+		$credit = User::where('id', '=', $id)->column(array('credit'));
+		
+		$transrec = array();
+		$transrec['credit'] = (float) $master_credit + $credit;
+		User::update(1, $transrec);
 
 		User::where('id', '=', $id)->delete();
 

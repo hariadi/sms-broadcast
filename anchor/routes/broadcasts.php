@@ -81,6 +81,10 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 		foreach ($accounts as $account) {
 			$vars['account'][$account->id] = $account->real_name;
 		}
+		// if role not admin, remove master account from use list
+		if (Auth::user()->role != 'administrator') {
+			unset($vars['account'][1]);
+		}
 
 		$vars['schedules'] = array(
 			'onetime' => __('broadcasts.onetime'),
@@ -105,7 +109,7 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 		$broadcasts = false;
 		$broadcasts_schedule = false;
 
-		$credit = User::where('id', '=', $self->id)->fetch(array('credit'));
+		$credit = User::where('id', '=', $input['account'])->fetch(array('credit'));
 
 		$input['topup'] = Topup::where('client', '=', $self->id)->sort('created', 'desc')->take(1)->column(array('id'));
 

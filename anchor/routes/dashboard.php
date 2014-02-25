@@ -12,8 +12,7 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 		$vars['client'] = Dashboard::view($id);
 		$vars['broadcasts'] = Broadcast::paginate($page, Config::get('meta.posts_per_page'));
 		$vars['topups'] = Topup::paginate($page, Config::get('meta.posts_per_page'));
-
-		$uuid = $vars['client']->credit;
+		$vars['ismsbalance'] = Config::meta('update_balance');
 
 		$credit_avail = User::where('id', '=', $id)->column(array('credit'));
 		$credit_use = Broadcast::where('client', '=', $id)->sum('credit');
