@@ -5,22 +5,29 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 	/*
 		List users
 	*/
-	Route::get('admin/profiles', function() {
-		$vars['messages'] = Notify::read();
-		$vars['user'] = Dashboard::view(Auth::user()->id);
-		//$vars['user'] = User::find(Auth::user()->id);
-		$uuid = $vars['user']->credit;
+	Route::get(array('admin/profiles', 'admin/profiles/(:num)'), function($page = 1) {
+		$id = Auth::user()->id;
 
-		$credit_avail = Credit::where('client', '=', Auth::user()->id)->column(array('credit'));
-		$credit_use = Transaction::where('client', '=', Auth::user()->id)->where('guid', '=', $uuid)->sum('credit');
+		$vars['messages'] = Notify::read();
+		$vars['user'] = User::find($id);
+
+		$vars['profiles'] = User::paginate($page, Config::get('meta.posts_per_page'), Uri::to('admin/profiles'));
+
+		$credit = Topup::where('client', '=', $id)->sort('created', 'desc')->take(1)->column(array('credit'));
+
+		$credit_avail = User::where('id', '=', $id)->column(array('credit'));
+		$credit_use = Broadcast::where('client', '=', $id)->sum('credit');
+		
+		//$credit_expired =
 
 		$vars['credits'] = array(
-			'available' => $credit_avail,
-			'used' => $credit_use,
-			'balance' => $credit_avail + $credit_use
+			'available' => $credit_avail ? $credit_avail : 0,
+			'used' => $credit_use
 		);
 
-		$vars['fields'] = Extend::fields('user', Auth::user()->id);
+		$vars['fields'] = Extend::fields('user', $id);
+
+
 
 		return View::create('profiles/index', $vars)
 			->partial('header', 'partials/header')
