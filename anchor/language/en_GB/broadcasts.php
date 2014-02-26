@@ -77,4 +77,5 @@ return array(
 
 	'account' => 'Account',
 	'current_credit' => 'Current Credit',
+	'no_reports' => 'No reports',
 );

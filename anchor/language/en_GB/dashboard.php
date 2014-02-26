@@ -11,5 +11,5 @@ return array(
 	'total' => 'Total',
 	'no_transactions' => 'No transactions',
 	'isms_balance' => 'ISMS Balance',
-
+	'no_reports' => 'No reports',
 );
