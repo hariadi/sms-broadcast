@@ -62,7 +62,7 @@
             <?php endforeach; ?>
           <?php else: ?>
             <tr>
-              <td colspan="5"><?php echo __('dashboard.no_broadcasts'); ?></td>
+              <td colspan="5"><?php echo __('dashboard.no_reports'); ?></td>
             </tr>
           <?php endif; ?>
         </tbody>
@@ -97,7 +97,7 @@
             <?php endforeach; ?>
           <?php else: ?>
             <tr>
-              <td colspan="5"><?php echo __('dashboard.no_topups'); ?></td>
+              <td colspan="5"><?php echo __('dashboard.no_reports'); ?></td>
             </tr>
           <?php endif; ?>
         </tbody>

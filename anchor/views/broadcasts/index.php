@@ -21,6 +21,7 @@
 					</tr>
 				</thead>
 				<tbody>
+				<?php if($broadcasts->count): ?>
 					<?php foreach($broadcasts->results as $key => $broadcast): ?>
 					<tr class="status draft">
 						<td><?php echo $key+1; ?></td>
@@ -34,6 +35,11 @@
 						?>"><?php echo __('broadcasts.' . $broadcast->status); ?></span></td>
 					</tr>
 				<?php endforeach; ?>
+				<?php else: ?>
+                <tr>
+                  <td colspan="7"><?php echo __('broadcasts.no_reports'); ?></td>
+                </tr>
+				<?php endif; ?>
 			</tbody>
 		</table>
 

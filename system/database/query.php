@@ -235,8 +235,8 @@ class Query extends Builder {
 	 *
 	 * @return string
 	 */
-	public function sum($column = null) {
-		list($result, $statement) = $this->connection->ask($this->build_select_sum($column), $this->bind);
+	public function sum($column = null, $group = null) {
+		list($result, $statement) = $this->connection->ask($this->build_select_sum($column, $group), $this->bind);
 
 		return $statement->fetchColumn();
 	}

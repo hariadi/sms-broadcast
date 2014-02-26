@@ -13,18 +13,27 @@ class User extends Base {
 
 		return $query->fetch();
 	}
-/*
-	public static function paginate($page = 1, $perpage = 10) {
-		$query = Query::table(static::table());
+
+	public static function paginate($page = 1, $perpage = 10, $url = null ) {
+	
+		$url = $url ? $url : Uri::to('users');
+
+		$query = static::left_join(Base::table('topups'), Base::table('topups.client'), '=', Base::table('users.id'));
 
 		$count = $query->count();
 
-		$results = $query->take($perpage)->skip(($page - 1) * $perpage)->sort('real_name', 'desc')->get();
+		$results = $query->take($perpage)
+			->skip(($page - 1) * $perpage)
+			->group(Base::table('users.id'))
+			->get(array(Base::table('users.*'),
+				Base::table('topups.credit as topup'),
+				Base::table('topups.expired as expired'),
+				Base::table('topups.expire as expire')));
 
-		return new Paginator($results, $count, $page, $perpage, Uri::to('users'));
+		return new Paginator($results, $count, $page, $perpage, $url);
 	}
-*/
-	public static function paginate($page = 1, $perpage = 10) {
+/*
+	public static function paginate($page = 1, $perpage = 10, $profiles = false) {
 
 		$query = static::multi_left_join(
 			Base::table('credits'),
@@ -43,6 +52,7 @@ class User extends Base {
 			
 		return new Paginator($results, $count, $page, $perpage, Uri::to('users'));
 	}
+*/
 
 	public static function upload($file) {
 		$storage = PATH . 'content' . DS . 'avatar'. DS;
