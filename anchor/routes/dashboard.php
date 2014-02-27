@@ -9,12 +9,12 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 		
 		$id = Auth::user()->id;
 		$vars['messages'] = Notify::read();
-		$vars['client'] = Dashboard::view($id);
+		$vars['client'] = User::find($id);
 		$vars['broadcasts'] = Broadcast::paginate($page, Config::get('meta.posts_per_page'));
 		$vars['topups'] = Topup::paginate($page, Config::get('meta.posts_per_page'));
 		$vars['ismsbalance'] = Config::meta('update_balance');
 
-		$credit_avail = User::where('id', '=', $id)->column(array('credit'));
+		$credit_avail = $vars['client']->credit;
 		$credit_use = Broadcast::where('client', '=', $id)->sum('credit');
 
 		$vars['credits'] = array(

@@ -135,6 +135,11 @@ Route::collection(array('before' => 'auth,admin,csrf'), function() {
 			$transrec['credit'] = (float) $master_credit - Input::get('credit');
 
 			User::update(1, $transrec);
+
+			$transrec['client'] = 1;
+			$transrec['created'] = $input['created'];
+			$transrec['createdby'] = $id;
+			Topup::create($transrec);
 		}
 
 		Notify::success(__('users.updated'));

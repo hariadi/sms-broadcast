@@ -29,8 +29,10 @@
             </li>
         </ul>
     </div>
-
     <div class="col-md-12 table-responsive">
+
+    <?php echo Html::link( Uri::current() . '/xls', __('global.export_xls'), array('class' => 'btn btn-success pull-right')); ?>
+
         <table class="table table-striped">
               <thead>
                 <tr>
@@ -50,33 +52,39 @@
                 $total_use = 0;
                 $total_expired = 0;
                 $total_balance = 0;
+
+
                 
                 ?>
                 <?php foreach($profiles->results as $key => $profile):
 
                     $use = Broadcast::where('client', '=', $profile->id)->sum('credit');
-                    $balance = number_format((float) abs($profile->topup - $use), 2, '.', '');
+                    $balance = money($profile->topup - $use);
                     
                     $total_credit += $profile->topup; 
                     $total_use += $use;
                     $total_expired += $profile->expire;
                     $total_balance += $balance;
+
+                    $topup = $profile->topup ? $profile->topup : money(0);
+                    $expire = $profile->expire ? $profile->expire : money(0);
                 ?>
                 <tr>
                 <td><?php echo $key+1; ?></td>
                   <td><a href="<?php echo Uri::to('admin/profiles/view/')  . $profile->id; ?>"><?php echo $profile->real_name; ?></a></td>
-                  <td><?php echo $profile->topup; ?></td>
+                  <td><?php echo $topup; ?></td>
                   <td><?php echo $use; ?></td>
-                  <td><?php echo $profile->expire; ?></td>
+                  <td><?php echo $expire; ?></td>
                   <td><?php echo $balance; ?></td>
                 </tr>
               <?php endforeach; ?>
                 <tr>
-                  <th colspan="2"></th>
-                  <th><?php echo $total_credit; ?></th>
-                  <th><?php echo $total_use; ?></th>
-                  <th><?php echo $total_expired; ?></th>
-                  <th><?php echo $total_balance; ?></th>
+                  <th>&nbsp;</th>
+                  <th>TOTAL</th>
+                  <th><?php echo money($total_credit); ?></th>
+                  <th><?php echo money($total_use); ?></th>
+                  <th><?php echo money($total_expired); ?></th>
+                  <th><?php echo money($total_balance); ?></th>
                 </tr>
                 <?php else: ?>
                 <tr>
