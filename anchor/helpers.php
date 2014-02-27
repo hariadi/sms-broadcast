@@ -113,6 +113,44 @@ function abbreviation($number) {
 		return (($number %100) >= 11 && ($number%100) <= 13) ? $number. 'th' : $number. $ends[$number % 10];
 }
 
+function money($number = 0) {
+	return number_format((float) abs($number), 2, '.', '');
+}
+
+function ExportToExcel($tittles, $filename, $data, $excel_name = ' ')
+ {
+ 	$excel_name = $excel_name ? $excel_name . ' Report' : 'Report';
+
+	require PATH . 'vendor/PHPExcel/PHPExcel' . EXT;
+
+	$excel = new PHPExcel();
+
+	// Set properties
+	$excel->getProperties()->setCreator("Transrec")
+						 ->setLastModifiedBy("Transrec")
+						 ->setTitle($excel_name)
+						 ->setSubject($excel_name)
+						 ->setDescription($excel_name);
+
+
+	// Add some data
+	$excel->setActiveSheetIndex(0);
+
+	$letters = range('A','Z');
+	$cell_name="";
+	foreach($tittles as $count => $tittle)
+	{
+		$cell_name = $letters[$count]."1";
+		$value = $tittle;
+		$excel->getActiveSheet()->SetCellValue($cell_name, $value);
+	}
+	$excel->getActiveSheet()->getStyle("$cell_name:" . $letters[$count] . (String) $count)->getFont()->setBold(true);
+
+	// Save Excel 2007 file
+	$objWriter = new PHPExcel_Writer_Excel2007($excel);
+	//$objWriter->save(str_replace('.php', '.xlsx', __FILE__));
+	$objWriter->save($filename.".xlsx");
+ }
 
 
 

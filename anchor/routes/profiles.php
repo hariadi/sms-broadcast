@@ -194,4 +194,98 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 		return Response::redirect('admin/profiles');
 	});
 
+	/**
+	 * Export to Excel
+	 */
+	//Route::get(array('admin/profiles/(:any)', 'admin/profiles/search/(:any)/(:any)/(:any)', 'admin/profiles/search/(:any)/(:any)/(:num)/(:any)'), function($from = null, $to = null, $type = 'xls') {
+	Route::get('admin/profiles/xls', function() {
+
+		$id = Auth::user()->id;
+
+		$query = User::sort('id', 'asc');
+
+		if (Auth::user()->role != 'administrator') {
+			$query = $query->where(Base::table('users.id'), '=', $id);
+		}
+		$profiles = $query->get();
+
+		$credit = Topup::where('client', '=', $id)->sort('created', 'desc')->take(1)->column(array('credit'));
+
+		$total_credit = 0; 
+        $total_use = 0;
+        $total_expired = 0;
+        $total_balance = 0;
+
+		require PATH . 'vendor/PHPExcel/PHPExcel' . EXT;
+
+		$excel = new PHPExcel();
+
+		// Set document properties
+		$excel->getProperties()->setCreator("Transrec")
+							 ->setLastModifiedBy("Transrec")
+							 ->setTitle("Client Report")
+							 ->setSubject("Client Report")
+							 ->setDescription("Client Report");
+
+		$excel->setActiveSheetIndex(0)
+          ->setCellValue('A1', 'Client')
+          ->setCellValue('B1', 'Credit')
+          ->setCellValue('C1', 'Use')
+          ->setCellValue('D1', 'Expired')
+          ->setCellValue('E1', 'Balance');
+
+        $excel->getActiveSheet()->getStyle('A1:E1')->getFont()->setBold(true);
+
+		foreach($profiles as $key => $profile) {
+
+			$use = Broadcast::where('client', '=', $profile->id)->sum('credit');
+			$balance = money($profile->topup - $use);
+			$total_credit += $profile->topup; 
+            $total_use += $use;
+            $total_expired += $profile->expire;
+            $total_balance += $balance;
+            $topup = $profile->topup ? $profile->topup : money(0);
+            $expire = $profile->expire ? $profile->expire : money(0);
+
+			$cell = (String) $key+2;
+			$total = (String) $key+3;
+			$key++;
+			//$recipients = implode(", ", Json::decode($profile->recipient));
+			$excel->setActiveSheetIndex(0)
+            ->setCellValue('A' . $cell, $profile->real_name)
+	          ->setCellValue('B' . $cell, $topup)
+	          ->setCellValue('C' . $cell, $use)
+	          ->setCellValue('D' . $cell, $expire)
+	          ->setCellValue('E' . $cell, $balance)
+	          ->setCellValue('A' . (String) $total, 'TOTAL')
+	          ->setCellValue('B' . (String) $total, '=SUM(B2:B'.($total-1).')')
+	          ->setCellValue('C' . (String) $total, '=SUM(C2:C'.($total-1).')')
+	          ->setCellValue('D' . (String) $total, '=SUM(D2:D'.($total-1).')')
+	          ->setCellValue('E' . (String) $total, '=SUM(E2:E'.($total-1).')');
+
+		}
+		$excel->getActiveSheet()->getStyle('A' . (String) $total .':E' . (String) $total)->getFont()->setBold(true);
+
+		// define report storage
+		$storage = PATH . 'content/report' . DS;
+		if(!is_dir($storage)) mkdir($storage);
+
+		// before save, delete old report
+		foreach (glob($storage . "*.{xls,xlsx,pdf}" ,GLOB_BRACE) as $file) {
+			if(is_file($file))
+		  unlink($file);
+		}
+
+		// report name
+		$filename = 'profiles_' . date('Y-m-d') . '.xls';
+		$filepath = $storage . $filename;
+
+		// save to report storage
+		$objWriter = PHPExcel_IOFactory::createWriter($excel, 'Excel5');
+		$objWriter->save($filepath);
+
+		return Response::redirect('/content/report/' . $filename);
+
+	});
+
 });
