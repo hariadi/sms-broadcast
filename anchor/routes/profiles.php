@@ -35,6 +35,31 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 	});
 
 	/*
+		Edit Broadcast
+	*/
+	Route::get('admin/profiles/view/(:num)', function($id) {
+		$vars['messages'] = Notify::read();
+		$vars['token'] = Csrf::token();
+		$vars['user'] = User::find($id);
+		$vars['profiles'] = User::paginate(1, Config::get('meta.posts_per_page'), Uri::to('admin/profiles'), true);
+
+		$credit = Topup::where('client', '=', $id)->sort('created', 'desc')->take(1)->column(array('credit'));
+
+		$credit_avail = User::where('id', '=', $id)->column(array('credit'));
+		$credit_use = Broadcast::where('client', '=', $id)->sum('credit');
+
+		$vars['credits'] = array(
+			'available' => $credit_avail ? $credit_avail : 0,
+			'used' => $credit_use
+		);
+		$vars['fields'] = Extend::fields('user', $id);
+
+		return View::create('profiles/view', $vars)
+			->partial('header', 'partials/header')
+			->partial('footer', 'partials/footer');
+	});
+
+	/*
 		Edit user
 	*/
 	Route::get('admin/profiles/edit', function() {
@@ -198,13 +223,13 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 	 * Export to Excel
 	 */
 	//Route::get(array('admin/profiles/(:any)', 'admin/profiles/search/(:any)/(:any)/(:any)', 'admin/profiles/search/(:any)/(:any)/(:num)/(:any)'), function($from = null, $to = null, $type = 'xls') {
-	Route::get('admin/profiles/xls', function() {
-
-		$id = Auth::user()->id;
+	Route::get(array('admin/profiles/xls', 'admin/profiles/view/(:num)/xls'), function($single = null) {
+	//Route::get('admin/profiles/xls', function() {
+		$id = $single ? $single : Auth::user()->id;
 
 		$query = User::sort('id', 'asc');
 
-		if (Auth::user()->role != 'administrator') {
+		if (Auth::user()->role != 'administrator' or $single) {
 			$query = $query->where(Base::table('users.id'), '=', $id);
 		}
 		$profiles = $query->get();
