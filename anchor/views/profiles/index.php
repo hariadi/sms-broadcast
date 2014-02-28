@@ -38,8 +38,10 @@
                 <tr>
                   <th>No.</th>
                   <th>Client</th>
+                  <th>Purchase Date</th>
+                  <th>Expired Date</th>
                   <th>Credit</th>
-                  <th>Use</th>
+                  <th>Used</th>
                   <th>Expired</th>
                   <th>Balance</th>
                 </tr>
@@ -56,9 +58,11 @@
 
                 
                 ?>
-                <?php foreach($profiles->results as $key => $profile):
+                <?php foreach(array_slice($profiles->results, 1) as $key => $profile):
 
                     $use = Broadcast::where('client', '=', $profile->id)->sum('credit');
+                    $profile->topup = Topup::where('client', '=', $profile->id)->sort('created', 'desc')->take(1)->column(array('credit'));
+                    
                     $balance = money($profile->topup - $use);
                     
                     $total_credit += $profile->topup; 
@@ -71,15 +75,17 @@
                 ?>
                 <tr>
                 <td><?php echo $key+1; ?></td>
-                  <td><a href="<?php echo Uri::to('admin/profiles/view/')  . $profile->id; ?>"><?php echo $profile->real_name; ?></a></td>
+                  <td><a href="<?php echo Uri::to('admin/broadcasts/add'); ?>"><?php echo $profile->real_name; ?></a></td>
+                  <td><?php echo Date::format($profile->created); ?></td>
+                  <td><?php echo Date::format($profile->expired); ?></td>
                   <td><?php echo $topup; ?></td>
                   <td><?php echo $use; ?></td>
-                  <td><?php echo $expire; ?></td>
+                  <td><?php echo $expire; ?></td>                  
                   <td><?php echo $balance; ?></td>
                 </tr>
               <?php endforeach; ?>
                 <tr>
-                  <th>&nbsp;</th>
+                  <th colspan="3">&nbsp;</th>
                   <th>TOTAL</th>
                   <th><?php echo money($total_credit); ?></th>
                   <th><?php echo money($total_use); ?></th>
