@@ -269,7 +269,8 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 
 			$use = Broadcast::where('client', '=', $profile->id)->sum('credit');
 			$profile->topup = Topup::where('client', '=', $profile->id)->sort('created', 'desc')->take(1)->column(array('credit'));
-
+			$profile->expired = Topup::where('client', '=', $profile->id)->sort('created', 'desc')->take(1)->column(array('expired'));
+			
 			$balance = money($profile->topup - $use);
 			$total_credit += $profile->topup; 
             $total_use += $use;
@@ -277,9 +278,6 @@ Route::collection(array('before' => 'auth,csrf'), function() {
             $total_balance += $balance;
             $topup = $profile->topup ? $profile->topup : money(0);
             $expire = $profile->expire ? $profile->expire : money(0);
-
-
-
 
 			$cell = (String) $key+2;
 			$total = (String) $key+3;
