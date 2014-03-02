@@ -58,11 +58,9 @@
 
                 
                 ?>
-                <?php foreach(array_slice($profiles->results, 1) as $key => $profile):
+                <?php foreach($profiles->results as $key => $profile):
 
                     $use = Broadcast::where('client', '=', $profile->id)->sum('credit');
-                    $profile->topup = Topup::where('client', '=', $profile->id)->sort('created', 'desc')->take(1)->column(array('credit'));
-                    
                     $balance = money($profile->topup - $use);
                     
                     $total_credit += $profile->topup; 
@@ -75,7 +73,7 @@
                 ?>
                 <tr>
                 <td><?php echo $key+1; ?></td>
-                  <td><a href="<?php echo Uri::to('admin/broadcasts/add'); ?>"><?php echo $profile->real_name; ?></a></td>
+                  <td><a href="<?php echo Uri::to('admin/profiles/view/')  . $profile->id; ?>"><?php echo $profile->real_name; ?></a></td>
                   <td><?php echo Date::format($profile->created); ?></td>
                   <td><?php echo Date::format($profile->expired); ?></td>
                   <td><?php echo $topup; ?></td>

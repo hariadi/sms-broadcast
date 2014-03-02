@@ -15,6 +15,8 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 
 		$credit = Topup::where('client', '=', $id)->sort('created', 'desc')->take(1)->column(array('credit'));
 
+		$vars['profiles']->topup = $credit;
+
 		$credit_avail = User::where('id', '=', $id)->column(array('credit'));
 		$credit_use = Broadcast::where('client', '=', $id)->sum('credit');
 		
@@ -35,6 +37,31 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 	});
 
 	/*
+		Edit Broadcast
+	*/
+	Route::get('admin/profiles/view/(:num)', function($id) {
+		$vars['messages'] = Notify::read();
+		$vars['token'] = Csrf::token();
+		$vars['user'] = User::find($id);
+		$vars['profiles'] = User::paginate(1, Config::get('meta.posts_per_page'), Uri::to('admin/profiles'), true);
+
+		$credit = Topup::where('client', '=', $id)->sort('created', 'desc')->take(1)->column(array('credit'));
+
+		$credit_avail = User::where('id', '=', $id)->column(array('credit'));
+		$credit_use = Broadcast::where('client', '=', $id)->sum('credit');
+
+		$vars['credits'] = array(
+			'available' => $credit_avail ? $credit_avail : 0,
+			'used' => $credit_use
+		);
+		$vars['fields'] = Extend::fields('user', $id);
+
+		return View::create('profiles/view', $vars)
+			->partial('header', 'partials/header')
+			->partial('footer', 'partials/footer');
+	});
+
+	/*
 		Edit user
 	*/
 	Route::get('admin/profiles/edit', function() {
@@ -43,17 +70,17 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 		$vars['token'] = Csrf::token();
 		$vars['user'] = User::find($id);
 
-		$uuid = $vars['user']->credit;
+		$credit = Topup::where('client', '=', $id)->sort('created', 'desc')->take(1)->column(array('credit'));
 
-		$credit_avail = Credit::where('client', '=', $id)->where('uuid', '=', $uuid)->column(array('credit'));
-		$credit_use = Transaction::where('client', '=', $id)->where('guid', '=', $uuid)->sum('credit');
+		$credit_avail = User::where('id', '=', $id)->column(array('credit'));
+		$credit_use = Broadcast::where('client', '=', $id)->sum('credit');
 
-
-		$vars['credit'] = array(
-			'available' => $credit_avail,
-			'used' => $credit_use,
-			'balance' => (int) $credit_avail + $credit_use
+		$vars['credits'] = array(
+			'available' => $credit_avail ? $credit_avail : 0,
+			'used' => $credit_use
 		);
+
+		$vars['fields'] = Extend::fields('user', $id);
 
 		$vars['statuses'] = array(
 			'inactive' => __('global.inactive'),
@@ -198,13 +225,13 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 	 * Export to Excel
 	 */
 	//Route::get(array('admin/profiles/(:any)', 'admin/profiles/search/(:any)/(:any)/(:any)', 'admin/profiles/search/(:any)/(:any)/(:num)/(:any)'), function($from = null, $to = null, $type = 'xls') {
-	Route::get('admin/profiles/xls', function() {
-
-		$id = Auth::user()->id;
+	Route::get(array('admin/profiles/xls', 'admin/profiles/view/(:num)/xls'), function($single = null) {
+	//Route::get('admin/profiles/xls', function() {
+		$id = $single ? $single : Auth::user()->id;
 
 		$query = User::sort('id', 'asc');
 
-		if (Auth::user()->role != 'administrator') {
+		if (Auth::user()->role != 'administrator' or $single) {
 			$query = $query->where(Base::table('users.id'), '=', $id);
 		}
 		$profiles = $query->get();
@@ -229,16 +256,21 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 
 		$excel->setActiveSheetIndex(0)
           ->setCellValue('A1', 'Client')
-          ->setCellValue('B1', 'Credit')
-          ->setCellValue('C1', 'Use')
-          ->setCellValue('D1', 'Expired')
-          ->setCellValue('E1', 'Balance');
+          ->setCellValue('B1', 'Purchase Date')
+          ->setCellValue('C1', 'Expired Date')
+          ->setCellValue('D1', 'Credit')          
+          ->setCellValue('E1', 'Used')
+          ->setCellValue('F1', 'Expired')
+          ->setCellValue('G1', 'Balance');
 
-        $excel->getActiveSheet()->getStyle('A1:E1')->getFont()->setBold(true);
+        $excel->getActiveSheet()->getStyle('A1:F1')->getFont()->setBold(true);
 
 		foreach($profiles as $key => $profile) {
 
 			$use = Broadcast::where('client', '=', $profile->id)->sum('credit');
+			$profile->topup = Topup::where('client', '=', $profile->id)->sort('created', 'desc')->take(1)->column(array('credit'));
+			$profile->expired = Topup::where('client', '=', $profile->id)->sort('created', 'desc')->take(1)->column(array('expired'));
+			
 			$balance = money($profile->topup - $use);
 			$total_credit += $profile->topup; 
             $total_use += $use;
@@ -253,18 +285,21 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 			//$recipients = implode(", ", Json::decode($profile->recipient));
 			$excel->setActiveSheetIndex(0)
             ->setCellValue('A' . $cell, $profile->real_name)
-	          ->setCellValue('B' . $cell, $topup)
-	          ->setCellValue('C' . $cell, $use)
-	          ->setCellValue('D' . $cell, $expire)
-	          ->setCellValue('E' . $cell, $balance)
+	          ->setCellValue('B' . $cell, Date::format($profile->created))
+	          ->setCellValue('C' . $cell, Date::format($profile->expired))
+	          ->setCellValue('D' . $cell, $topup)	          
+	          ->setCellValue('E' . $cell, $use)
+	          ->setCellValue('F' . $cell, $expire)
+	          ->setCellValue('G' . $cell, $balance)
+
 	          ->setCellValue('A' . (String) $total, 'TOTAL')
-	          ->setCellValue('B' . (String) $total, '=SUM(B2:B'.($total-1).')')
-	          ->setCellValue('C' . (String) $total, '=SUM(C2:C'.($total-1).')')
 	          ->setCellValue('D' . (String) $total, '=SUM(D2:D'.($total-1).')')
-	          ->setCellValue('E' . (String) $total, '=SUM(E2:E'.($total-1).')');
+	          ->setCellValue('E' . (String) $total, '=SUM(E2:E'.($total-1).')')
+	          ->setCellValue('F' . (String) $total, '=SUM(F2:F'.($total-1).')')
+	          ->setCellValue('G' . (String) $total, '=SUM(G2:G'.($total-1).')');
 
 		}
-		$excel->getActiveSheet()->getStyle('A' . (String) $total .':E' . (String) $total)->getFont()->setBold(true);
+		$excel->getActiveSheet()->getStyle('A' . (String) $total .':G' . (String) $total)->getFont()->setBold(true);
 
 		// define report storage
 		$storage = PATH . 'content/report' . DS;

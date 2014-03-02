@@ -28,7 +28,7 @@ Route::collection(array('before' => 'auth,admin,csrf'), function() {
 		$credit_avail = User::where('id', '=', $id)->column(array('credit'));
 		$credit_use = Broadcast::where('client', '=', $id)->where('topup', '=', $topupid)->sum('credit');
 
-		$expired = Credit::where('client', '=', $id)->column(array('expired'));
+		$expired = Topup::where('client', '=', $id)->column(array('expired'));
 
 		if ($expired == '0000-00-00 00:00:00' || empty($expired)) {
 			$expired_date = new DateTime(Date::mysql('now'));;

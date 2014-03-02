@@ -21,10 +21,12 @@
       <div class="panel-heading"><?php echo __('dashboard.credit'); ?></div>
       <!-- List group -->
       <ul class="list-group">
+      <?php if (Auth::user()->role == 'administrator') : ?>
         <li class="list-group-item">
           <span class="badge" id="ismsUpdate"><?php echo abs($ismsbalance); ?></span>
           <?php echo __('dashboard.isms_balance'); ?>  <a href="#" id="ismsBalance"><i class="glyphicon glyphicon-refresh"></i> &nbsp;</a>
         </li>
+      <?php endif; ?>
         <li class="list-group-item">
           <span class="badge"><?php echo abs($credits['available']); ?></span>
           <?php echo __('dashboard.available'); ?>

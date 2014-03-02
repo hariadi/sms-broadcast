@@ -14,11 +14,15 @@ class User extends Base {
 		return $query->fetch();
 	}
 
-	public static function paginate($page = 1, $perpage = 10, $url = null ) {
+	public static function paginate($page = 1, $perpage = 10, $url = null, $single = false) {
 	
 		$url = $url ? $url : Uri::to('users');
 
 		$query = static::left_join(Base::table('topups'), Base::table('topups.client'), '=', Base::table('users.id'));
+
+		if ($single) {
+			$query = $query->where(Base::table('users.id'), '=',  Auth::user()->id);
+		}
 
 		$count = $query->count();
 
