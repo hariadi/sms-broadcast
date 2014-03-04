@@ -18,7 +18,7 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 		$vars['profiles']->topup = $credit;
 
 		$credit_avail = User::where('id', '=', $id)->column(array('credit'));
-		$credit_use = Broadcast::where('client', '=', $id)->sum('credit');
+		$credit_use = Broadcast::where('account', '=', $id)->sum('credit');
 		
 		//$credit_expired =
 
