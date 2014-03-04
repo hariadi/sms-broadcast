@@ -18,6 +18,7 @@
 						<th>Email</th>
 						<th>Role</th>
 						<th>Status</th>
+						<th>Credit</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -28,6 +29,7 @@
 						<td><?php echo $user->email; ?></td>
 						<td><?php echo __('users.' . $user->role); ?></td>
 						<td><abbr title="<?php echo Date::format($user->created); ?>"><?php echo __('global.' . $user->status); ?></abbr></td>
+						<td><?php echo $user->credit; ?></td>
 					</tr>
 					<?php endforeach; ?>
 				</tbody>
