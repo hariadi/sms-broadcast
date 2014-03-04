@@ -34,7 +34,9 @@ class Broadcast extends Base {
 		$query = static::left_join(Base::table('users'), Base::table('users.id'), '=', Base::table('broadcasts.client'));
 		
 		if (Auth::user()->role != 'administrator') {
-			$query = $query->where(Base::table('broadcasts.client'), '=', Auth::user()->id);
+			$query = $query->where(Base::table('broadcasts.client'), '=', Auth::user()->id)
+			->or_where(Base::table('broadcasts.account'), '=', Auth::user()->id)
+			->where(Base::table('broadcasts.client'), '!=', Base::table('broadcasts.account'));
 		}
 
 		$count = $query->count();
@@ -59,7 +61,9 @@ class Broadcast extends Base {
 		$query = static::left_join(Base::table('users'), Base::table('users.id'), '=', Base::table('broadcasts.client'));
 
 		if (Auth::user()->role != 'administrator') {
-			$query = $query->where(Base::table('broadcasts.client'), '=', Auth::user()->id);
+			$query = $query->where(Base::table('broadcasts.client'), '=', Auth::user()->id)
+			->or_where(Base::table('broadcasts.account'), '=', Auth::user()->id)
+			->where(Base::table('broadcasts.client'), '!=', Base::table('broadcasts.account'));
 		}
 
 		$from_date = $filter['from'] . '00:00:00';

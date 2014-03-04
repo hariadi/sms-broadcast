@@ -25,8 +25,8 @@
 					<?php foreach($broadcasts->results as $key => $broadcast): ?>
 					<tr class="status draft">
 						<td><?php echo $key+1; ?></td>
-						<td><a href="<?php echo Uri::to('admin/broadcasts/view/' . $broadcast->id); ?>" title=""><?php echo $broadcast->client_name; ?></a></td>
-						<td><?php echo $broadcast->sender; ?></td>
+						<td><a href="<?php echo Uri::to('admin/broadcasts/view/' . $broadcast->id); ?>" title=""><?php echo User::find($broadcast->account)->real_name; ?></a></td>
+						<td><?php echo $broadcast->client_name; ?></td>
 						<td><?php echo Date::format($broadcast->created); ?></td>
 						<td><span class="label label-<?php
 						$search  = array('success', 'pending', 'failed');

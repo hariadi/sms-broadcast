@@ -54,6 +54,29 @@ Route::post('admin/login', array('before' => 'csrf', 'main' => function() {
 		return Response::redirect('admin/login');
 	}
 
+	// get whos has been expired
+	$validity = Topup::where('expired', '<', Date::mysql('now'))
+		->where('client', '!=', 1)
+		->sort('created', 'desc')
+		->get();
+
+	$ids = array();
+
+	foreach ($validity as $key => $topup) {
+		if (!in_array($topup->client, $ids)) {
+			$expire = array();
+			$expire['expire'] = User::where('id', '=', $topup->client)->column(array('credit'));
+			//print_r($expire);
+			Topup::update($topup->id, $expire);
+			unset($expire);
+			$expire['credit'] = '0.00';
+			User::update($topup->client, $expire);
+			//print_r($expire);
+
+		}
+		$ids[] = $topup->client;
+	}
+
 	// If admin login, notify about current balance
 	if (Auth::user()->role == 'administrator') {
 		$balance = (float) Config::meta('update_balance');

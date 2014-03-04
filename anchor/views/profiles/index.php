@@ -58,9 +58,9 @@
 
                 
                 ?>
-                <?php foreach(array_slice($profiles->results, 1) as $key => $profile):
+                <?php foreach($profiles->results as $key => $profile):
 
-                    $use = Broadcast::where('client', '=', $profile->id)->sum('credit');
+                    $use = Broadcast::where('account', '=', $profile->id)->sum('credit');
                     $profile->topup = Topup::where('client', '=', $profile->id)->sort('created', 'desc')->take(1)->column(array('credit'));
                     
                     $balance = money($profile->topup - $use);

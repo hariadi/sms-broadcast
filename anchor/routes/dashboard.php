@@ -15,7 +15,7 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 		$vars['ismsbalance'] = Config::meta('update_balance');
 
 		$credit_avail = $vars['client']->credit;
-		$credit_use = Broadcast::where('client', '=', $id)->sum('credit');
+		$credit_use = Broadcast::where('account', '=', $id)->sum('credit');
 
 		$vars['credits'] = array(
 			'available' => $credit_avail ? $credit_avail : 0,
