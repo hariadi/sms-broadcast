@@ -137,7 +137,9 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 
 		$query = Broadcast::sort('created', 'desc');
 		if (Auth::user()->role != 'administrator') {
-			$query = $query->where(Base::table('broadcasts.client'), '=', Auth::user()->id);
+			$query = $query->where(Base::table('broadcasts.client'), '=', Auth::user()->id)
+			->or_where(Base::table('broadcasts.account'), '=', Auth::user()->id)
+			->where(Base::table('broadcasts.client'), '!=', Base::table('broadcasts.account'));
 		}
 
 		if ($search) {
@@ -163,23 +165,27 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 
 		$excel->setActiveSheetIndex(0)
           ->setCellValue('A1', 'Client')
-          ->setCellValue('B1', 'Recipient')
-          ->setCellValue('C1', 'Created')
-          ->setCellValue('D1', 'Keyword')
-          ->setCellValue('E1', 'Message')
-          ->setCellValue('F1', 'Status');
+          ->setCellValue('B1', 'Sender')
+          ->setCellValue('C1', 'Recipient')
+          ->setCellValue('D1', 'Created')
+          ->setCellValue('E1', 'Keyword')
+          ->setCellValue('F1', 'Message')
+          ->setCellValue('G1', 'Status');
 
 		foreach($reports as $key => $report) {
 			$cell = (String) $key+2;
 			//$recipients = implode(", ", Json::decode($report->recipient));
 			$excel->setActiveSheetIndex(0)
-            ->setCellValue('A' . $cell, $report->client)
-	          ->setCellValue('B' . $cell, $report->recipient)
-	          ->setCellValue('C' . $cell, $report->created)
-	          ->setCellValue('D' . $cell, $report->keyword)
-	          ->setCellValue('E' . $cell, $report->message)
-	          ->setCellValue('F' . $cell, $report->status);
+			->setCellValue('A' . $cell, User::find($report->account)->real_name)
+			->setCellValue('B' . $cell, User::find($report->client)->real_name)
+			->setCellValue('C' . $cell, $report->recipient)
+			->setCellValue('D' . $cell, $report->created)
+			->setCellValue('E' . $cell, $report->keyword)
+			->setCellValue('F' . $cell, $report->message)
+			->setCellValue('G' . $cell, $report->status);
 		}
+
+		$excel->getActiveSheet()->getStyle('A1:G1')->getFont()->setBold(true);
 
 		// define report storage
 		$storage = PATH . 'content/report' . DS;
