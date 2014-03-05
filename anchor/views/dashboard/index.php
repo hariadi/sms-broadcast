@@ -58,7 +58,7 @@
             <?php foreach($broadcasts->results as $broadcast): ?>
               <tr>
                 <td><?php echo $broadcast->quantity; ?></td>
-                <td><?php echo $broadcast->credit; ?></td>
+                <td><?php echo money($broadcast->credit); ?></td>
                 <td><a href="<?php echo Uri::to('admin/broadcasts/view/')  . $broadcast->id; ?>"><?php echo Date::format($broadcast->created, 'jS F Y h:i A'); ?></a></td>
               </tr>
             <?php endforeach; ?>
@@ -93,7 +93,7 @@
           <?php if($topups->count): ?>
             <?php foreach($topups->results as $topup): ?>
               <tr>
-                <td><?php echo $topup->credit; ?></td>
+                <td><?php echo money($topup->credit); ?></td>
                 <td><?php echo Date::format($topup->created, 'jS F Y h:i A'); ?></td>
               </tr>
             <?php endforeach; ?>

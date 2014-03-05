@@ -20,11 +20,11 @@
         <h3><?php echo __('dashboard.credit'); ?></h3>
         <ul class="list-group">
             <li class="list-group-item">
-            <span class="badge"><?php echo $credits['available']; ?></span>
+            <span class="badge"><?php echo abs($credits['available']); ?></span>
             <?php echo __('dashboard.available'); ?>
             </li>
             <li class="list-group-item">
-            <span class="badge"><?php echo $credits['used']; ?></span>
+            <span class="badge"><?php echo abs($credits['used']); ?></span>
             <?php echo __('dashboard.used'); ?>
             </li>
         </ul>
@@ -78,10 +78,10 @@
                   <td><a href="<?php echo Uri::to('admin/broadcasts/add'); ?>"><?php echo $profile->real_name; ?></a></td>
                   <td><?php echo Date::format($profile->created); ?></td>
                   <td><?php echo Date::format($profile->expired); ?></td>
-                  <td><?php echo $topup; ?></td>
-                  <td><?php echo $use; ?></td>
-                  <td><?php echo $expire; ?></td>                  
-                  <td><?php echo $balance; ?></td>
+                  <td><?php echo money($topup); ?></td>
+                  <td><?php echo money($use); ?></td>
+                  <td><?php echo money($expire); ?></td>                  
+                  <td><?php echo money($balance); ?></td>
                 </tr>
               <?php endforeach; ?>
                 <tr>

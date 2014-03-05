@@ -113,8 +113,10 @@ function abbreviation($number) {
 		return (($number %100) >= 11 && ($number%100) <= 13) ? $number. 'th' : $number. $ends[$number % 10];
 }
 
-function money($number = 0) {
-	return number_format((float) abs($number), 2, '.', '');
+function money($number = 0, $abs = true) {
+
+	$money = abs($number);
+	return ($abs) ? $money : number_format((float) $money, 2, '.', '');
 }
 
 function ExportToExcel($tittles, $filename, $data, $excel_name = ' ')
