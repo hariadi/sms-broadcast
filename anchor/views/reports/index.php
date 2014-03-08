@@ -56,53 +56,50 @@
       </div>
     </div>
   </fieldset>
-</form>       
+</form> 
+<div class="table-responsive">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Client</th>
+        <th>Message</th>
+        <th>Sender</th>
+        <th>Date</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <?php if($reports->count): ?>
+      <?php foreach($reports->results as $report): ?>
+      <tr>
+        <!--td><a href="<?php echo Uri::to('admin/reports/view/')  . $report->id; ?>"><?php echo $report->id; ?></a></td-->
+        <td><?php echo $report->id; ?></td>
+        <td><?php echo  User::find($report->account)->real_name; ?></td>
+        <td><?php echo $report->message; ?></td>
+        <td><?php echo $report->client_name; ?></td>
+        <td><?php echo Date::format($report->created, 'jS F Y h:i A'); ?></td>
+        <td><span class="label label-<?php
+        $search  = array('success', 'pending', 'failed');
+        $replace = array('success', 'primary', 'warning');
+        echo str_replace($search, $replace, $report->status); 
+        ?>"><?php echo __('broadcasts.' . $report->status); ?></span></td>
+      </tr>
+    <?php endforeach; ?>
+    <?php else: ?>
+    <tr>
+      <td colspan="7"><?php echo __('reports.no_reports'); ?></td>
+    </tr>
+  <?php endif; ?>
+  </tbody>
+</table>
 
+<?php if ($reports->links()) : ?>
+<ul class="pagination">
+  <?php echo $reports->links(); ?>
+</ul>
+<?php endif; ?>
 
-          <h2 class="sub-header">Latest Activities</h2>
-          <div class="table-responsive">
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Client</th>
-                  <th>Message</th>
-                  <th>Sender</th>
-                  <th>Date</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                <?php if($reports->count): ?>
-                <?php foreach($reports->results as $report): ?>
-                <tr>
-                  <!--td><a href="<?php echo Uri::to('admin/reports/view/')  . $report->id; ?>"><?php echo $report->id; ?></a></td-->
-                  <td><?php echo $report->id; ?></td>
-                  <td><?php echo  User::find($report->account)->real_name; ?></td>
-                  <td><?php echo $report->message; ?></td>
-                  <td><?php echo $report->client_name; ?></td>
-                  <td><?php echo Date::format($report->created, 'jS F Y h:i A'); ?></td>
-                  <td><span class="label label-<?php
-                  $search  = array('success', 'pending', 'failed');
-                  $replace = array('success', 'primary', 'warning');
-                  echo str_replace($search, $replace, $report->status); 
-                  ?>"><?php echo __('broadcasts.' . $report->status); ?></span></td>
-                </tr>
-              <?php endforeach; ?>
-            <?php else: ?>
-            <tr>
-              <td colspan="7"><?php echo __('reports.no_reports'); ?></td>
-            </tr>
-          <?php endif; ?>
-        </tbody>
-      </table>
-
-      <?php if ($reports->links()) : ?>
-      <ul class="pagination">
-        <?php echo $reports->links(); ?>
-      </ul>
-    <?php endif; ?>
-
-  </div>
+</div>
 
   <?php echo $footer; ?>
