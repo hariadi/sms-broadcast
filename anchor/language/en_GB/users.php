@@ -55,6 +55,10 @@ return array(
 	'email_missing' => 'Please enter a valid email address',
 	'email_not_found' => 'Profile not found.',
 
+	'charge' => 'Charge',
+	'charges' => 'Charges',
+	'charge_explain' => '',
+
 	// messages
 	'updated' => 'User profile updated.',
 	'since' 	=> 'Since',

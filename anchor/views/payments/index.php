@@ -16,6 +16,7 @@
                   <th>Client</th>
                   <th>Purchase Date</th>
                   <th>Expired Date</th>
+                  <th>Charge</th>
                   <th>Credit</th>
                   <th>Used</th>
                   <th>Expired</th>
@@ -54,6 +55,7 @@
                   <td><a href="<?php echo Uri::to('admin/broadcasts/add'); ?>"><?php echo $profile->real_name; ?></a></td>
                   <td><?php echo Date::format($profile->created); ?></td>
                   <td><?php echo Date::format($profile->expired); ?></td>
+                  <td><?php echo money($profile->charge, false); ?></td>
                   <td><?php echo money($topup); ?></td>
                   <td><?php echo money($use); ?></td>
                   <td><?php echo money($expire); ?></td>                  
@@ -61,7 +63,7 @@
                 </tr>
               <?php endforeach; ?>
                 <tr>
-                  <th colspan="3">&nbsp;</th>
+                  <th colspan="4">&nbsp;</th>
                   <th>TOTAL</th>
                   <th><?php echo money($total_credit); ?></th>
                   <th><?php echo money($total_use); ?></th>

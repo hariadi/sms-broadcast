@@ -73,12 +73,13 @@ Route::collection(array('before' => 'auth,csrf'), function() {
           ->setCellValue('A1', 'Client')
           ->setCellValue('B1', 'Purchase Date')
           ->setCellValue('C1', 'Expired Date')
-          ->setCellValue('D1', 'Credit')          
-          ->setCellValue('E1', 'Used')
-          ->setCellValue('F1', 'Expired')
-          ->setCellValue('G1', 'Balance');
+          ->setCellValue('D1', 'Charge')
+          ->setCellValue('E1', 'Credit')
+          ->setCellValue('F1', 'Used')
+          ->setCellValue('G1', 'Expired')
+          ->setCellValue('H1', 'Balance');
 
-        $excel->getActiveSheet()->getStyle('A1:F1')->getFont()->setBold(true);
+        $excel->getActiveSheet()->getStyle('A1:H1')->getFont()->setBold(true);
 
 		foreach($profiles as $key => $profile) {
 
@@ -102,19 +103,20 @@ Route::collection(array('before' => 'auth,csrf'), function() {
             ->setCellValue('A' . $cell, $profile->real_name)
 	          ->setCellValue('B' . $cell, Date::format($profile->created))
 	          ->setCellValue('C' . $cell, Date::format($profile->expired))
-	          ->setCellValue('D' . $cell, $topup)	          
-	          ->setCellValue('E' . $cell, $use)
-	          ->setCellValue('F' . $cell, $expire)
-	          ->setCellValue('G' . $cell, $balance)
+	          ->setCellValue('D' . $cell, $profile->charge)
+	          ->setCellValue('E' . $cell, $topup)
+	          ->setCellValue('F' . $cell, $use)
+	          ->setCellValue('G' . $cell, $expire)
+	          ->setCellValue('H' . $cell, $balance)
 
 	          ->setCellValue('A' . (String) $total, 'TOTAL')
-	          ->setCellValue('D' . (String) $total, '=SUM(D2:D'.($total-1).')')
 	          ->setCellValue('E' . (String) $total, '=SUM(E2:E'.($total-1).')')
 	          ->setCellValue('F' . (String) $total, '=SUM(F2:F'.($total-1).')')
-	          ->setCellValue('G' . (String) $total, '=SUM(G2:G'.($total-1).')');
+	          ->setCellValue('G' . (String) $total, '=SUM(G2:G'.($total-1).')')
+	          ->setCellValue('H' . (String) $total, '=SUM(H2:H'.($total-1).')');
 
 		}
-		$excel->getActiveSheet()->getStyle('A' . (String) $total .':G' . (String) $total)->getFont()->setBold(true);
+		$excel->getActiveSheet()->getStyle('A' . (String) $total .':H' . (String) $total)->getFont()->setBold(true);
 
 		// define report storage
 		$storage = PATH . 'content/report' . DS;
