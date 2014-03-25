@@ -10,13 +10,6 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 
 		$vars['messages'] = Notify::read();
 		$vars['user'] = User::find($id);
-
-		$vars['profiles'] = User::paginate($page, Config::get('meta.posts_per_page'), Uri::to('admin/profiles'));
-
-		$credit = Topup::where('client', '=', $id)->sort('created', 'desc')->take(1)->column(array('credit'));
-
-		$vars['profiles']->topup = $credit;
-
 		$credit_avail = User::where('id', '=', $id)->column(array('credit'));
 		$credit_use = Broadcast::where('account', '=', $id)->sum('credit');
 		
@@ -43,12 +36,6 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 		$vars['messages'] = Notify::read();
 		$vars['token'] = Csrf::token();
 		$vars['user'] = User::find($id);
-		$vars['profiles'] = User::paginate(1, Config::get('meta.posts_per_page'), Uri::to('admin/profiles'), true);
-
-		$credit = Topup::where('client', '=', $id)->sort('created', 'desc')->take(1)->column(array('credit'));
-
-		$credit_avail = User::where('id', '=', $id)->column(array('credit'));
-		$credit_use = Broadcast::where('client', '=', $id)->sum('credit');
 
 		$vars['credits'] = array(
 			'available' => $credit_avail ? $credit_avail : 0,

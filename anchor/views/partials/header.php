@@ -38,7 +38,7 @@
 	        <ul class="nav navbar-nav">
 	        	
 	        	<?php 
-						$menu = array('dashboard', 'broadcasts', 'schedules', 'profiles', 'reports');
+						$menu = array('dashboard', 'broadcasts', 'schedules', 'profiles', 'reports', 'payments');
 						$admin = array(/*'posts', 'comments', 'pages', 'menu', 'categories', 'extend', */'users');
 						?>
 						<?php foreach($menu as $url): ?>
