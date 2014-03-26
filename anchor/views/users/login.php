@@ -1,7 +1,7 @@
 <?php echo $header; ?>
 
-<div class="text-center"><a href="http://www.erp21.com.my">
-	<img src="<?php echo asset('anchor/views/assets/img/jobs-malaysia.png'); ?>" border="0" width="300" height="100"></a>
+<div class="text-center"><a href="http://transrec.my">
+	<img src="<?php echo asset('anchor/views/assets/img/transrec-310x163.png'); ?>" border="0" width="300" height="100" alt="TransRec Solution"></a>
 </div>
 
 <form class="form-signin" role="form" method="post" action="<?php echo Uri::to('admin/login'); ?>">
