@@ -71,6 +71,19 @@
 						<p class="help-block"><?php echo __('users.credit_explain'); ?></p>
 	        </div>
 	      </div>
+
+	      <div class="form-group">
+	        <label class="col-lg-2 control-label" for="charge"><?php echo __('users.charge'); ?></label>
+	        <div class="col-lg-5">
+	          <?php echo Form::text('charge', Input::previous('charge'), array(
+	          				'value' => 0,
+							'class' => 'form-control',
+							'id' => 'charge',
+						)); ?>
+						<p class="help-block"><?php echo __('users.charge_explain'); ?></p>
+	        </div>
+	      </div>
+
 			<?php
 	      	$expired = new DateTime(Date::mysql('now'));;
 	      	$expired->modify('+3 month');

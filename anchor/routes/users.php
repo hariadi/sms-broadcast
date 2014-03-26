@@ -62,7 +62,7 @@ Route::collection(array('before' => 'auth,admin,csrf'), function() {
 	});
 
 	Route::post('admin/users/edit/(:num)', function($id) {
-		$input = Input::get(array('username', 'email', 'real_name', 'bio', 'status', 'role', 'credit', 'current_credit'));
+		$input = Input::get(array('username', 'email', 'real_name', 'bio', 'status', 'role', 'credit', 'charge','current_credit'));
 		$password_reset = false;
 		$topup_reset = false;
 		$topup = array();
@@ -173,7 +173,7 @@ Route::collection(array('before' => 'auth,admin,csrf'), function() {
 	});
 
 	Route::post('admin/users/add', function() {
-		$input = Input::get(array('username', 'email', 'real_name', 'password', 'bio', 'credit', 'status', 'role'));
+		$input = Input::get(array('username', 'email', 'real_name', 'password', 'bio', 'credit', 'charge', 'status', 'role'));
 
 		$topup_reset = false;
 		$topup = array();

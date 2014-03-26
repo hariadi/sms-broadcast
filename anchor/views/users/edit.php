@@ -75,6 +75,17 @@
       </div>
 
       <div class="form-group">
+        <label class="col-lg-2 control-label" for="charge"><?php echo __('users.charge'); ?></label>
+        <div class="col-lg-5">
+          <?php echo Form::text('charge', Input::previous('charge', $user->charge), array(
+            'class' => 'form-control',
+            'id' => 'charge',
+          )); ?>
+          <p class="help-block"><?php echo __('users.charge_explain'); ?></p>
+        </div>
+      </div>
+
+      <div class="form-group">
         <label class="col-md-2 control-label" for="expired"><?php echo __('users.credit_expired'); ?></label>
 
         <div class="col-lg-4">
