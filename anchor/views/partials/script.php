@@ -89,15 +89,5 @@
 
 				});
 
-
-
-				/*/select.change(function() {
-				    if($(this).val() == 'image') {
-				        $('label[for=indOther], #indOther').show();
-				    } else {
-				        $('label[for=indOther], #indOther').hide();
-				    }
-				});*/
-
 			});
 		</script>
